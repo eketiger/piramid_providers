@@ -5,7 +5,20 @@ import { PROVIDER } from "@/data/fixtures";
 
 export default function ScorecardPage() {
   const monthData = [82, 85, 88, 90, 87, 89, 91, 93, 92, 94, 94, 96];
-  const months = ["May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic", "Ene", "Feb", "Mar", "Abr"];
+  const months = [
+    "May",
+    "Jun",
+    "Jul",
+    "Ago",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dic",
+    "Ene",
+    "Feb",
+    "Mar",
+    "Abr",
+  ];
   const breakdowns = [
     { label: "Aceptación de órdenes", value: 98, unit: "%", benchmark: "≥ 90%" },
     { label: "Respuesta a licitaciones", value: 87, unit: "%", benchmark: "≥ 80%" },
@@ -19,10 +32,7 @@ export default function ScorecardPage() {
   return (
     <div className="page-body">
       <div style={{ display: "grid", gridTemplateColumns: "1.1fr 1fr", gap: 16, marginBottom: 16 }}>
-        <div
-          className="card card-pad"
-          style={{ display: "flex", gap: 24, alignItems: "center" }}
-        >
+        <div className="card card-pad" style={{ display: "flex", gap: 24, alignItems: "center" }}>
           <div style={{ position: "relative", width: 140, height: 140, flexShrink: 0 }}>
             <svg width="140" height="140" viewBox="0 0 140 140">
               <circle cx="70" cy="70" r="58" fill="none" stroke="#EFECE1" strokeWidth="12" />
@@ -132,8 +142,7 @@ export default function ScorecardPage() {
                     width: "100%",
                     height: `${(v / maxM) * 110}px`,
                     background: i === monthData.length - 1 ? "var(--accent)" : "var(--fg1)",
-                    opacity:
-                      i === monthData.length - 1 ? 1 : 0.2 + (i / monthData.length) * 0.8,
+                    opacity: i === monthData.length - 1 ? 1 : 0.2 + (i / monthData.length) * 0.8,
                     borderRadius: 4,
                   }}
                 />

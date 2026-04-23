@@ -2,13 +2,7 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import {
-  Button,
-  Field,
-  Icon,
-  Pill,
-  Stepper,
-} from "@/components/ui";
+import { Button, Field, Icon, Pill, Stepper } from "@/components/ui";
 import { PiramidMark } from "@/components/shell/logo";
 import { PROVIDER, VERTICALS } from "@/data/fixtures";
 
@@ -137,9 +131,7 @@ export default function OnboardingPage() {
 function OnbEmpresa() {
   return (
     <>
-      <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 4 }}>
-        Datos de tu empresa
-      </div>
+      <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 4 }}>Datos de tu empresa</div>
       <div style={{ fontSize: 13, color: "var(--fg3)", marginBottom: 20 }}>
         Esta información aparece en tu perfil público y en todas las cotizaciones.
       </div>
@@ -164,10 +156,7 @@ function OnbEmpresa() {
         </Field>
       </div>
       <div style={{ height: 14 }} />
-      <Field
-        label="Descripción del servicio"
-        hint="Máx 280 caracteres · esto lo ve el tramitador"
-      >
+      <Field label="Descripción del servicio" hint="Máx 280 caracteres · esto lo ve el tramitador">
         <textarea className="textarea" rows={3} defaultValue={PROVIDER.descripcion} />
       </Field>
     </>
@@ -177,9 +166,7 @@ function OnbEmpresa() {
 function OnbServicios() {
   return (
     <>
-      <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 4 }}>
-        Categorías y productos
-      </div>
+      <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 4 }}>Categorías y productos</div>
       <div style={{ fontSize: 13, color: "var(--fg3)", marginBottom: 20 }}>
         Elegí en qué tipo de servicios querés recibir licitaciones.
       </div>
@@ -231,9 +218,7 @@ function OnbServicios() {
 function OnbCobertura() {
   return (
     <>
-      <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 4 }}>
-        Cobertura geográfica
-      </div>
+      <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 4 }}>Cobertura geográfica</div>
       <div style={{ fontSize: 13, color: "var(--fg3)", marginBottom: 20 }}>
         Definí dónde podés prestar servicio.
       </div>
@@ -267,8 +252,7 @@ function OnbCobertura() {
           style={{
             position: "absolute",
             inset: 0,
-            background:
-              "radial-gradient(circle at 45% 50%, rgba(245,137,58,0.3), transparent 30%)",
+            background: "radial-gradient(circle at 45% 50%, rgba(245,137,58,0.3), transparent 30%)",
           }}
         />
         <Icon name="map" size={24} />
@@ -296,9 +280,7 @@ function OnbDocs() {
   ];
   return (
     <>
-      <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 4 }}>
-        Documentación requerida
-      </div>
+      <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 4 }}>Documentación requerida</div>
       <div style={{ fontSize: 13, color: "var(--fg3)", marginBottom: 20 }}>
         Subí tus documentos para poder operar en la red.
       </div>

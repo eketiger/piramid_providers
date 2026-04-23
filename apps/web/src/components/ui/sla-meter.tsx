@@ -16,21 +16,24 @@ export function SlaMeter({
   const state = slaState(pct, horasRestantes);
   const label = slaLabel(horasRestantes);
   const color =
-    state === "risk"
-      ? "var(--danger)"
-      : state === "warn"
-        ? "var(--warning)"
-        : "var(--success)";
+    state === "risk" ? "var(--danger)" : state === "warn" ? "var(--warning)" : "var(--success)";
 
   if (compact) {
     return (
-      <div className="flex items-center gap-2 min-w-[110px]" role="meter" aria-valuenow={safePct} aria-valuemin={0} aria-valuemax={100} aria-label={`SLA: ${label}`}>
-        <div className={cn("sla-bar flex-1 min-w-[40px]", state !== "ok" && state)}>
+      <div
+        className="flex min-w-[110px] items-center gap-2"
+        role="meter"
+        aria-valuenow={safePct}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-label={`SLA: ${label}`}
+      >
+        <div className={cn("sla-bar min-w-[40px] flex-1", state !== "ok" && state)}>
           <span style={{ width: `${safePct}%` }} />
         </div>
         {showLabel && (
           <span
-            className="mono text-[11px] font-semibold min-w-[60px] text-right"
+            className="mono min-w-[60px] text-right text-[11px] font-semibold"
             style={{ color }}
           >
             {label}
@@ -40,9 +43,19 @@ export function SlaMeter({
     );
   }
   return (
-    <div className="flex flex-col gap-[5px] min-w-[120px]" role="meter" aria-valuenow={safePct} aria-valuemin={0} aria-valuemax={100} aria-label={`SLA: ${label}`}>
-      <div className="flex justify-between items-center">
-        <span className="text-[11px] font-medium uppercase tracking-[0.04em]" style={{ color: "var(--fg3)" }}>
+    <div
+      className="flex min-w-[120px] flex-col gap-[5px]"
+      role="meter"
+      aria-valuenow={safePct}
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-label={`SLA: ${label}`}
+    >
+      <div className="flex items-center justify-between">
+        <span
+          className="text-[11px] font-medium tracking-[0.04em] uppercase"
+          style={{ color: "var(--fg3)" }}
+        >
           SLA
         </span>
         <span className="mono text-[11.5px] font-semibold" style={{ color }}>

@@ -1,14 +1,7 @@
 "use client";
 
 import * as React from "react";
-import {
-  Button,
-  Checkbox,
-  Field,
-  Icon,
-  Pill,
-  Switch,
-} from "@/components/ui";
+import { Button, Checkbox, Field, Icon, Pill, Switch } from "@/components/ui";
 import { PROVIDER } from "@/data/fixtures";
 
 export default function CuentaPage() {
@@ -81,11 +74,29 @@ export default function CuentaPage() {
             <div className="card-title">Preferencias de notificación</div>
           </div>
           <div style={{ padding: 8 }}>
-            {([
-              { label: "Email", hint: "Resumen diario y alertas urgentes", value: emailNotif, onChange: setEmailNotif, icon: "mail" as const },
-              { label: "Push", hint: "En el navegador y el mobile", value: pushNotif, onChange: setPushNotif, icon: "bell" as const },
-              { label: "WhatsApp", hint: "Solo para alertas críticas de SLA", value: whatsapp, onChange: setWhatsapp, icon: "message-circle" as const },
-            ]).map((p) => (
+            {[
+              {
+                label: "Email",
+                hint: "Resumen diario y alertas urgentes",
+                value: emailNotif,
+                onChange: setEmailNotif,
+                icon: "mail" as const,
+              },
+              {
+                label: "Push",
+                hint: "En el navegador y el mobile",
+                value: pushNotif,
+                onChange: setPushNotif,
+                icon: "bell" as const,
+              },
+              {
+                label: "WhatsApp",
+                hint: "Solo para alertas críticas de SLA",
+                value: whatsapp,
+                onChange: setWhatsapp,
+                icon: "message-circle" as const,
+              },
+            ].map((p) => (
               <div
                 key={p.label}
                 style={{

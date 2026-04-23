@@ -2,12 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import {
-  Button,
-  Icon,
-  Pill,
-  SearchInput,
-} from "@/components/ui";
+import { Button, Icon, Pill, SearchInput } from "@/components/ui";
 import { VERTICALS } from "@/data/fixtures";
 
 type Provider = {
@@ -24,12 +19,74 @@ type Provider = {
 };
 
 const PROVIDERS: Provider[] = [
-  { id: "prv-1", nombre: "Técnica Austral S.R.L.", vertical: "hogar", ciudad: "CABA + GBA Norte", score: 4.7, sla: 94, respuesta: "00:27", volumen: 127, cert: ["Samsung", "BGH"], tag: "destacado" },
-  { id: "prv-2", nombre: "Frío Patagonia", vertical: "hogar", ciudad: "CABA + GBA Sur", score: 4.6, sla: 92, respuesta: "00:34", volumen: 94, cert: ["Whirlpool"], tag: "nuevo" },
-  { id: "prv-3", nombre: "Taller Centro", vertical: "taller", ciudad: "CABA", score: 4.5, sla: 90, respuesta: "01:12", volumen: 58, cert: ["VW oficial"] },
-  { id: "prv-4", nombre: "Asistencia Médica ARG", vertical: "medico", ciudad: "CABA + GBA", score: 4.8, sla: 96, respuesta: "00:18", volumen: 202, cert: ["OSDE", "Swiss"] },
-  { id: "prv-5", nombre: "LogExpress", vertical: "logistica", ciudad: "AMBA", score: 4.4, sla: 88, respuesta: "00:45", volumen: 310, cert: [] },
-  { id: "prv-6", nombre: "Clima Norte", vertical: "hogar", ciudad: "GBA Norte", score: 4.5, sla: 91, respuesta: "00:41", volumen: 71, cert: ["Samsung"] },
+  {
+    id: "prv-1",
+    nombre: "Técnica Austral S.R.L.",
+    vertical: "hogar",
+    ciudad: "CABA + GBA Norte",
+    score: 4.7,
+    sla: 94,
+    respuesta: "00:27",
+    volumen: 127,
+    cert: ["Samsung", "BGH"],
+    tag: "destacado",
+  },
+  {
+    id: "prv-2",
+    nombre: "Frío Patagonia",
+    vertical: "hogar",
+    ciudad: "CABA + GBA Sur",
+    score: 4.6,
+    sla: 92,
+    respuesta: "00:34",
+    volumen: 94,
+    cert: ["Whirlpool"],
+    tag: "nuevo",
+  },
+  {
+    id: "prv-3",
+    nombre: "Taller Centro",
+    vertical: "taller",
+    ciudad: "CABA",
+    score: 4.5,
+    sla: 90,
+    respuesta: "01:12",
+    volumen: 58,
+    cert: ["VW oficial"],
+  },
+  {
+    id: "prv-4",
+    nombre: "Asistencia Médica ARG",
+    vertical: "medico",
+    ciudad: "CABA + GBA",
+    score: 4.8,
+    sla: 96,
+    respuesta: "00:18",
+    volumen: 202,
+    cert: ["OSDE", "Swiss"],
+  },
+  {
+    id: "prv-5",
+    nombre: "LogExpress",
+    vertical: "logistica",
+    ciudad: "AMBA",
+    score: 4.4,
+    sla: 88,
+    respuesta: "00:45",
+    volumen: 310,
+    cert: [],
+  },
+  {
+    id: "prv-6",
+    nombre: "Clima Norte",
+    vertical: "hogar",
+    ciudad: "GBA Norte",
+    score: 4.5,
+    sla: 91,
+    respuesta: "00:41",
+    volumen: 71,
+    cert: ["Samsung"],
+  },
 ];
 
 export default function MarketplacePage() {
@@ -56,7 +113,12 @@ export default function MarketplacePage() {
           marginBottom: 16,
         }}
       >
-        <SearchInput value={search} onChange={setSearch} placeholder="Buscar proveedor o zona…" width={340} />
+        <SearchInput
+          value={search}
+          onChange={setSearch}
+          placeholder="Buscar proveedor o zona…"
+          width={340}
+        />
         <select
           className="select"
           value={vertical}

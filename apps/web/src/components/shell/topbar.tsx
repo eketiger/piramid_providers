@@ -104,10 +104,7 @@ export function Topbar() {
           )}
         </div>
         <IconButton icon="help-circle" title="Ayuda" />
-        <div
-          style={{ position: "relative" }}
-          onMouseDown={(e) => e.stopPropagation()}
-        >
+        <div style={{ position: "relative" }} onMouseDown={(e) => e.stopPropagation()}>
           <button
             onClick={() => setMenuOpen((v) => !v)}
             style={{

@@ -97,12 +97,12 @@ apps/web/src/lib/api/hooks/bids.ts  →  useBidsQuery, useBidQuery, useQuoteMuta
 
 ## Scripts de root (orquestados por Turborepo)
 
-| Script | Qué hace |
-|---|---|
-| `pnpm dev` | Levanta `apps/web` y `apps/api` en paralelo |
-| `pnpm build` | Build ordenado (`@piramid/types` → `api` → `web`) |
-| `pnpm typecheck` | `tsc --noEmit` en todos los paquetes |
-| `pnpm lint` | ESLint 9 flat config sobre todo el repo |
-| `pnpm test` | Unit tests (Phase 3) |
-| `pnpm test:e2e` | Playwright (Phase 3) |
-| `pnpm format` | Prettier write |
+| Script           | Qué hace                                          |
+| ---------------- | ------------------------------------------------- |
+| `pnpm dev`       | Levanta `apps/web` y `apps/api` en paralelo       |
+| `pnpm build`     | Build ordenado (`@piramid/types` → `api` → `web`) |
+| `pnpm typecheck` | `tsc --noEmit` en todos los paquetes              |
+| `pnpm lint`      | ESLint 9 flat config sobre todo el repo           |
+| `pnpm test`      | Unit tests (Phase 3)                              |
+| `pnpm test:e2e`  | Playwright (Phase 3)                              |
+| `pnpm format`    | Prettier write                                    |

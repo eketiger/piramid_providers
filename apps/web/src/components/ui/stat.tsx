@@ -18,11 +18,7 @@ export function Stat({
   accent?: string;
 }) {
   const deltaColor =
-    delta?.dir === "up"
-      ? "var(--success)"
-      : delta?.dir === "down"
-        ? "var(--danger)"
-        : "var(--fg3)";
+    delta?.dir === "up" ? "var(--success)" : delta?.dir === "down" ? "var(--danger)" : "var(--fg3)";
 
   return (
     <div className="card card-pad flex flex-col gap-2">

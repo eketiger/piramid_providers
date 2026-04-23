@@ -2,15 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import {
-  Button,
-  EstadoBadge,
-  Icon,
-  IconButton,
-  Pill,
-  SlaMeter,
-  Stat,
-} from "@/components/ui";
+import { Button, EstadoBadge, Icon, IconButton, Pill, SlaMeter, Stat } from "@/components/ui";
 import { BIDS, NOTIFS, ORDERS, VERTICALS, VISITS } from "@/data/fixtures";
 
 export default function InicioPage() {
@@ -176,10 +168,7 @@ export default function InicioPage() {
                 </thead>
                 <tbody>
                   {activeOrders.map((o) => (
-                    <tr
-                      key={o.id}
-                      onClick={() => router.push(`/ordenes/${o.id}`)}
-                    >
+                    <tr key={o.id} onClick={() => router.push(`/ordenes/${o.id}`)}>
                       <td>
                         <div style={{ fontWeight: 500 }}>{o.titulo}</div>
                         <div style={{ fontSize: 11, color: "var(--fg3)" }} className="mono">

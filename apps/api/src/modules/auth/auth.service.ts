@@ -64,10 +64,7 @@ export class AuthService {
     const expiresInStr = this.cfg.get<string>("JWT_EXPIRES_IN", "7d");
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const signOpts = { expiresIn: expiresInStr as any };
-    const token = await this.jwt.signAsync(
-      { sub: user.id, email: user.email },
-      signOpts,
-    );
+    const token = await this.jwt.signAsync({ sub: user.id, email: user.email }, signOpts);
     const expiresAt = new Date(Date.now() + parseDuration(expiresInStr)).toISOString();
     return {
       token,

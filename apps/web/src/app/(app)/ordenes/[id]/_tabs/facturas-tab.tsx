@@ -14,24 +14,48 @@ type Invoice = {
 
 export function FacturasTab({ order }: { order: Order }) {
   const rows: Invoice[] = [
-    { id: 1, tipo: "Presupuesto", num: "PRES-4521", fecha: "19/04/2026", monto: order.monto * 0.4, estado: "Aprobado", variant: "success" },
-    { id: 2, tipo: "Factura A", num: "A-0001-00012345", fecha: "—", monto: order.monto, estado: "Pendiente de emisión", variant: "warning" },
+    {
+      id: 1,
+      tipo: "Presupuesto",
+      num: "PRES-4521",
+      fecha: "19/04/2026",
+      monto: order.monto * 0.4,
+      estado: "Aprobado",
+      variant: "success",
+    },
+    {
+      id: 2,
+      tipo: "Factura A",
+      num: "A-0001-00012345",
+      fecha: "—",
+      monto: order.monto,
+      estado: "Pendiente de emisión",
+      variant: "warning",
+    },
   ];
   const cols: Column<Invoice>[] = [
     { header: "Tipo", render: (r) => r.tipo, style: { width: 120 } },
-    { header: "Número", render: (r) => <span className="mono">{r.num}</span>, style: { width: 160 } },
-    { header: "Fecha", render: (r) => <span className="mono">{r.fecha}</span>, style: { width: 120 } },
+    {
+      header: "Número",
+      render: (r) => <span className="mono">{r.num}</span>,
+      style: { width: 160 },
+    },
+    {
+      header: "Fecha",
+      render: (r) => <span className="mono">{r.fecha}</span>,
+      style: { width: 120 },
+    },
     {
       header: "Monto",
-      render: (r) => (
-        <span className="mono font-medium">{money(r.monto)}</span>
-      ),
+      render: (r) => <span className="mono font-medium">{money(r.monto)}</span>,
       style: { width: 140, textAlign: "right" },
       cellStyle: { textAlign: "right" },
     },
     {
       header: "Estado",
-      render: (r) => <EstadoBadge estado={{ key: r.estado, label: r.estado, variant: r.variant }} />,
+      render: (r) => (
+        <EstadoBadge estado={{ key: r.estado, label: r.estado, variant: r.variant }} />
+      ),
       style: { width: 170 },
     },
     {

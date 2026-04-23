@@ -54,9 +54,7 @@ export function VisitasTab({ order }: { order: Order }) {
             },
             {
               header: "Comentarios",
-              render: (r) => (
-                <span style={{ color: "var(--fg2)" }}>{r.comentarios || "—"}</span>
-              ),
+              render: (r) => <span style={{ color: "var(--fg2)" }}>{r.comentarios || "—"}</span>,
             },
           ]}
           rows={visits}

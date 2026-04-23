@@ -2,14 +2,7 @@
 
 import * as React from "react";
 import { notFound, useRouter } from "next/navigation";
-import {
-  Button,
-  EstadoBadge,
-  Icon,
-  Pill,
-  SlaMeter,
-  Tabs,
-} from "@/components/ui";
+import { Button, EstadoBadge, Icon, Pill, SlaMeter, Tabs } from "@/components/ui";
 import { ORDERS, makeActivity, type Order } from "@/data/fixtures";
 import { money } from "@/lib/format";
 import { DetalleTab } from "./_tabs/detalle-tab";
@@ -35,7 +28,7 @@ function OrderDetail({ order }: { order: Order }) {
 
   return (
     <div className="page-body" style={{ maxWidth: 1400 }}>
-      <div className="flex items-center gap-3 mb-3.5">
+      <div className="mb-3.5 flex items-center gap-3">
         <Button variant="ghost" icon="arrow-left" onClick={() => router.push("/ordenes")}>
           Volver a órdenes
         </Button>
@@ -45,10 +38,10 @@ function OrderDetail({ order }: { order: Order }) {
         {order.retrabajo && <Pill variant="danger">Retrabajo</Pill>}
       </div>
 
-      <div className="flex items-start gap-5 mb-5 flex-wrap">
-        <div className="flex-1 min-w-[300px]">
-          <h2 className="text-2xl font-semibold tracking-tight m-0">{order.titulo}</h2>
-          <div className="flex gap-3 mt-2 text-[13px] flex-wrap" style={{ color: "var(--fg2)" }}>
+      <div className="mb-5 flex flex-wrap items-start gap-5">
+        <div className="min-w-[300px] flex-1">
+          <h2 className="m-0 text-2xl font-semibold tracking-tight">{order.titulo}</h2>
+          <div className="mt-2 flex flex-wrap gap-3 text-[13px]" style={{ color: "var(--fg2)" }}>
             <span className="inline-flex items-center gap-1.5">
               <Icon name="building-2" size={13} />
               {order.empresa}
@@ -78,7 +71,7 @@ function OrderDetail({ order }: { order: Order }) {
 
       <div className="card card-pad mb-4">
         <div
-          className="grid gap-5 items-center"
+          className="grid items-center gap-5"
           style={{ gridTemplateColumns: "auto 2fr 1fr 1fr 1fr" }}
         >
           <div>
@@ -89,15 +82,12 @@ function OrderDetail({ order }: { order: Order }) {
           </div>
           <div>
             <div className="eyebrow">Progreso por etapa</div>
-            <div className="flex items-center gap-1 mt-2.5">
+            <div className="mt-2.5 flex items-center gap-1">
               {order.sla.etapas.map((e, i) => (
                 <React.Fragment key={i}>
-                  <div
-                    className="flex items-center gap-1.5"
-                    style={{ flex: e.done ? 0 : 1 }}
-                  >
+                  <div className="flex items-center gap-1.5" style={{ flex: e.done ? 0 : 1 }}>
                     <div
-                      className="w-[22px] h-[22px] rounded-full flex items-center justify-center text-[11px] font-semibold shrink-0"
+                      className="flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full text-[11px] font-semibold"
                       style={{
                         background: e.done
                           ? "var(--success)"
@@ -121,7 +111,7 @@ function OrderDetail({ order }: { order: Order }) {
                   </div>
                   {i < order.sla.etapas.length - 1 && (
                     <div
-                      className="flex-1 h-[2px]"
+                      className="h-[2px] flex-1"
                       style={{ background: e.done ? "var(--success)" : "#EFECE1" }}
                     />
                   )}
@@ -154,7 +144,7 @@ function OrderDetail({ order }: { order: Order }) {
           </div>
           <div>
             <div className="eyebrow">Monto</div>
-            <div className="mono text-xl font-semibold mt-1">{money(order.monto)}</div>
+            <div className="mono mt-1 text-xl font-semibold">{money(order.monto)}</div>
           </div>
         </div>
       </div>

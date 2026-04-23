@@ -3,8 +3,7 @@ import { Button, Icon } from "@/components/ui";
 const ITEMS = [
   {
     titulo: "Observación del tramitador",
-    body:
-      "Por favor adjuntar foto del daño en detalle del compresor antes de confirmar presupuesto.",
+    body: "Por favor adjuntar foto del daño en detalle del compresor antes de confirmar presupuesto.",
     actor: "E. Niefeld",
     tiempo: "Hace 1h",
     critico: true,
@@ -31,11 +30,11 @@ export function NovedadesTab() {
       {ITEMS.map((n, i) => (
         <div
           key={i}
-          className="px-5 py-4 flex gap-3"
+          className="flex gap-3 px-5 py-4"
           style={{ borderTop: i > 0 ? "1px solid var(--border)" : "none" }}
         >
           <div
-            className="w-8 h-8 rounded-lg flex items-center justify-center"
+            className="flex h-8 w-8 items-center justify-center rounded-lg"
             style={{
               background: n.critico ? "var(--warning-wash)" : "var(--neutral-wash)",
               color: n.critico ? "var(--warning)" : "var(--fg2)",
@@ -45,10 +44,10 @@ export function NovedadesTab() {
           </div>
           <div className="flex-1">
             <div className="text-[13.5px] font-medium">{n.titulo}</div>
-            <div className="text-[12.5px] mt-1" style={{ color: "var(--fg2)" }}>
+            <div className="mt-1 text-[12.5px]" style={{ color: "var(--fg2)" }}>
               {n.body}
             </div>
-            <div className="text-[11px] mt-1.5" style={{ color: "var(--fg3)" }}>
+            <div className="mt-1.5 text-[11px]" style={{ color: "var(--fg3)" }}>
               {n.actor} · {n.tiempo}
             </div>
           </div>

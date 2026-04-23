@@ -36,10 +36,7 @@ export class BidsController {
 
   @Get(":id")
   @ApiOperation({ summary: "Detalle de una licitación" })
-  getById(
-    @Req() req: Request & { user?: { providerId: string | null } },
-    @Param("id") id: string,
-  ) {
+  getById(@Req() req: Request & { user?: { providerId: string | null } }, @Param("id") id: string) {
     const providerId = req.user?.providerId;
     if (!providerId) throw new ForbiddenException();
     return this.bids.getById(providerId, id);

@@ -5,7 +5,9 @@ export type UserRole = z.infer<typeof UserRole>;
 
 export const LoginBody = z.object({
   email: z.string().email(),
-  password: z.string().min(8),
+  // Don't enforce password policy here — login shouldn't leak the policy via
+  // validation errors. Registration enforces the rules below.
+  password: z.string().min(1),
 });
 export type LoginBody = z.infer<typeof LoginBody>;
 

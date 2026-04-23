@@ -1,15 +1,7 @@
 "use client";
 
 import * as React from "react";
-import {
-  Button,
-  EstadoBadge,
-  Field,
-  Icon,
-  InfoRow,
-  Pill,
-  Tabs,
-} from "@/components/ui";
+import { Button, EstadoBadge, Field, Icon, InfoRow, Pill, Tabs } from "@/components/ui";
 import { PROVIDER, VERTICALS } from "@/data/fixtures";
 
 export default function PerfilPage() {
@@ -70,10 +62,7 @@ function DatosSection() {
         </Field>
       </div>
       <div className="divider" />
-      <Field
-        label="Descripción del servicio"
-        hint="Máx 280 caracteres · esto lo ve el tramitador"
-      >
+      <Field label="Descripción del servicio" hint="Máx 280 caracteres · esto lo ve el tramitador">
         <textarea className="textarea" rows={3} defaultValue={PROVIDER.descripcion} />
       </Field>
       <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 16 }}>
@@ -180,8 +169,7 @@ function CoberturaSection() {
           style={{
             position: "absolute",
             inset: 0,
-            background:
-              "radial-gradient(circle at 45% 50%, rgba(245,137,58,0.3), transparent 30%)",
+            background: "radial-gradient(circle at 45% 50%, rgba(245,137,58,0.3), transparent 30%)",
           }}
         />
         <Icon name="map" size={24} />
@@ -314,11 +302,19 @@ function FichaSection() {
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
           <InfoRow icon="building-2" label="Razón social" value={PROVIDER.nombre} />
-          <InfoRow icon="briefcase" label="Vertical" value={VERTICALS[PROVIDER.verticalPrimario].label} />
+          <InfoRow
+            icon="briefcase"
+            label="Vertical"
+            value={VERTICALS[PROVIDER.verticalPrimario].label}
+          />
           <InfoRow icon="clock" label="Respuesta promedio" value={PROVIDER.tiempoRespuesta} />
           <InfoRow icon="star" label="Score" value={PROVIDER.score.toFixed(1)} />
           <InfoRow icon="rotate-ccw" label="Retrabajos" value={`${PROVIDER.retrabajos}%`} />
-          <InfoRow icon="shield-check" label="Cumplimiento SLA" value={`${PROVIDER.cumplimientoSLA}%`} />
+          <InfoRow
+            icon="shield-check"
+            label="Cumplimiento SLA"
+            value={`${PROVIDER.cumplimientoSLA}%`}
+          />
         </div>
       </div>
       <div className="card card-pad">
@@ -343,8 +339,7 @@ function FichaSection() {
               top: -80,
               width: 240,
               height: 240,
-              background:
-                "radial-gradient(circle, rgba(245,137,58,0.32), transparent 65%)",
+              background: "radial-gradient(circle, rgba(245,137,58,0.32), transparent 65%)",
             }}
           />
           <div className="eyebrow" style={{ color: "var(--accent)" }}>
