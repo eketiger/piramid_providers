@@ -1,8 +1,16 @@
 node_modules
 .next
 out
+dist
 *.log
+.env
 .env*.local
+!.env.example
 .DS_Store
 .turbo
 tsconfig.tsbuildinfo
+coverage
+playwright-report
+.playwright
+apps/api/dev.db
+apps/api/dev.db-journal

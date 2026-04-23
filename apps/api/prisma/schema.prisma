@@ -1,0 +1,129 @@
+// Phase 2 MVP schema: auth, providers, bids.
+// SQLite used locally; Planetscale/MySQL (with relationMode = "prisma") is the
+// target for staging/prod. Schema stays provider-agnostic beyond the datasource.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  owner
+  admin
+  operator
+  viewer
+}
+
+enum ProviderStatus {
+  pending
+  approved
+  suspended
+}
+
+enum BidStatus {
+  abierta
+  cotizada
+  en_revision
+  adjudicada
+  perdida
+  vencida
+}
+
+enum Vertical {
+  hogar
+  taller
+  medico
+  logistica
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  firstName    String
+  lastName     String
+  phone        String?
+  role         UserRole @default(owner)
+  providerId   String?
+  provider     Provider? @relation(fields: [providerId], references: [id])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([providerId])
+}
+
+model Provider {
+  id                String         @id @default(cuid())
+  legalName         String
+  tradeName         String
+  cuit              String         @unique
+  email             String
+  phone             String
+  description       String?
+  verticalPrimary   Vertical
+  status            ProviderStatus @default(pending)
+  score             Float          @default(0)
+  cumplimientoSLA   Float          @default(0)
+  tiempoRespuesta   String         @default("--:--")
+  costoVisita       Int            @default(0)
+  satisfaccion      Float          @default(0)
+  volumen           Int            @default(0)
+  retrabajos        Float          @default(0)
+  categorias        String         @default("[]")
+  productos         String         @default("[]")
+  cobertura         String         @default("[]")
+  certificaciones   String         @default("[]")
+  horarios          String?
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  users             User[]
+  bids              Bid[]
+
+  @@index([verticalPrimary, status])
+  @@index([score])
+}
+
+model Bid {
+  id              String    @id @default(cuid())
+  code            String    @unique
+  titulo          String
+  descripcion     String
+  vertical        Vertical
+  categoria       String
+  empresa         String
+  ciudad          String
+  cliente         String
+  estado          BidStatus @default(abierta)
+  monto           Int       @default(0)
+  slaPct          Float     @default(0)
+  horasRestantes  Int       @default(0)
+  etapa           String    @default("Cotización")
+  tiempoEstimado  String    @default("--")
+  competidores    Int       @default(0)
+  fechaRegistro   DateTime  @default(now())
+  fechaLimite     DateTime
+  providerId      String
+  provider        Provider  @relation(fields: [providerId], references: [id])
+  quote           BidQuote?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([providerId, estado, fechaLimite])
+}
+
+model BidQuote {
+  id           String   @id @default(cuid())
+  bidId        String   @unique
+  bid          Bid      @relation(fields: [bidId], references: [id])
+  laborCost    Int
+  partsCost    Int
+  total        Int
+  commitedDays String
+  notes        String?
+  sentAt       DateTime @default(now())
+}
