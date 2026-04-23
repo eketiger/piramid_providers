@@ -80,9 +80,19 @@ jobs:
       - name: Generate Prisma client
         run: pnpm --filter @piramid/api exec prisma generate
 
-      - name: Create test database
+      - name: Wait for MySQL + create test database
         run: |
+          set -euxo pipefail
+          for i in {1..30}; do
+            mysqladmin -h 127.0.0.1 -uroot -pdev ping --silent && break
+            echo "waiting for mysql ($i/30)..."
+            sleep 2
+          done
+          mysql -h 127.0.0.1 -uroot -pdev -e "SELECT VERSION();"
           mysql -h 127.0.0.1 -uroot -pdev -e "CREATE DATABASE IF NOT EXISTS piramid_test; GRANT ALL ON piramid_test.* TO 'piramid'@'%'; FLUSH PRIVILEGES;"
+
+      - name: Push test schema (diagnostic)
+        run: pnpm --filter @piramid/api test:setup
 
       - name: Test with coverage
         run: pnpm test:coverage
