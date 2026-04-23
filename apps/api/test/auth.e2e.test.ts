@@ -5,7 +5,7 @@ import request from "supertest";
 import { PrismaClient } from "@prisma/client";
 import { AppModule } from "../src/app.module";
 
-const TEST_DB = "file:./test.db";
+const TEST_DB = process.env.DATABASE_URL ?? "mysql://piramid:dev@localhost:3306/piramid_test";
 
 describe("AuthController (integration)", () => {
   let app: INestApplication;

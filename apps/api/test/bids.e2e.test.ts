@@ -6,7 +6,7 @@ import { PrismaClient, Vertical, BidStatus, ProviderStatus } from "@prisma/clien
 import { AppModule } from "../src/app.module";
 import * as argon2 from "argon2";
 
-const TEST_DB = "file:./test.db";
+const TEST_DB = process.env.DATABASE_URL ?? "mysql://piramid:dev@localhost:3306/piramid_test";
 
 describe("BidsController (integration)", () => {
   let app: INestApplication;

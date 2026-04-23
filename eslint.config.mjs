@@ -13,8 +13,12 @@ export default tseslint.config(
       "**/coverage/**",
       "**/playwright-report/**",
       "**/.playwright/**",
+      "**/cdk.out/**",
+      "**/.source/**",
       "apps/api/prisma/generated/**",
+      "apps/api/openapi.json",
       "apps/web/src/lib/api/types.ts",
+      "apps/web/src/lib/api/types.generated.ts",
     ],
   },
   js.configs.recommended,
@@ -22,7 +26,7 @@ export default tseslint.config(
 
   // Frontend (React) rules
   {
-    files: ["apps/web/**/*.{ts,tsx}"],
+    files: ["apps/web/**/*.{ts,tsx}", "apps/docs/**/*.{ts,tsx}"],
     plugins: {
       react,
       "react-hooks": reactHooks,
@@ -55,6 +59,9 @@ export default tseslint.config(
       ...jsxA11y.configs.recommended.rules,
       "react/react-in-jsx-scope": "off",
       "react/prop-types": "off",
+      // Reading localStorage + setting state is a legitimate effect pattern;
+      // the "you might not need an effect" rule is opinionated, not safety.
+      "react-hooks/set-state-in-effect": "off",
       "@typescript-eslint/no-unused-vars": [
         "warn",
         { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
@@ -67,7 +74,7 @@ export default tseslint.config(
 
   // Backend (NestJS) rules
   {
-    files: ["apps/api/**/*.ts", "packages/**/*.ts"],
+    files: ["apps/api/**/*.{ts,mjs}", "packages/**/*.ts"],
     languageOptions: {
       globals: {
         console: "readonly",

@@ -1,52 +1,50 @@
+import * as Sentry from "@sentry/node";
 import { logger } from "./logger";
 
 /**
- * Sentry wiring stub.
+ * Sentry lifecycle helpers for the API.
  *
- * When SENTRY_DSN is set (via infra secret in prod), we initialize the real
- * SDK. Without it, the helpers become a no-op so local dev stays quiet and
+ * When SENTRY_DSN is set we init the real SDK.
+ * Without it the helpers become a no-op so local dev stays quiet and
  * tests don't hit network sinks.
- *
- * We keep the dependency optional (no @sentry/nestjs pinned yet) so Phase 4
- * can ship without extra weight. Replace the dynamic import below with
- * `import * as Sentry from "@sentry/nestjs"` once we decide on the concrete
- * SDK.
  */
 
-type SentryLike = {
-  captureException(err: unknown): void;
-  captureMessage(msg: string): void;
-};
+let initialized = false;
 
-let sentry: SentryLike | null = null;
-
-export async function initSentry(): Promise<void> {
+export function initSentry(): void {
   const dsn = process.env.SENTRY_DSN;
   if (!dsn) {
     logger.debug({ msg: "Sentry disabled (SENTRY_DSN not set)" });
     return;
   }
-  try {
-    // @ts-expect-error dynamic optional dep — see docstring.
-    const mod = await import("@sentry/node");
-    mod.init({
-      dsn,
-      environment: process.env.NODE_ENV ?? "development",
-      tracesSampleRate: process.env.NODE_ENV === "production" ? 0.1 : 1.0,
-    });
-    sentry = mod;
-    logger.info({ msg: "Sentry initialised" });
-  } catch (err) {
-    logger.warn({ msg: "Sentry init failed; continuing without", err });
-  }
+  Sentry.init({
+    dsn,
+    environment: process.env.NODE_ENV ?? "development",
+    tracesSampleRate: process.env.NODE_ENV === "production" ? 0.1 : 1.0,
+    // Redaction mirrors the pino logger: never ship auth headers or raw bodies
+    // with credentials.
+    beforeSend(event) {
+      const headers = event.request?.headers;
+      if (headers) {
+        for (const key of Object.keys(headers)) {
+          if (/^(authorization|cookie|x-api-key)$/i.test(key)) {
+            headers[key] = "[redacted]";
+          }
+        }
+      }
+      return event;
+    },
+  });
+  initialized = true;
+  logger.info({ msg: "Sentry initialised" });
 }
 
 export function captureException(err: unknown): void {
-  sentry?.captureException(err);
+  if (initialized) Sentry.captureException(err);
   logger.error({ err });
 }
 
 export function captureMessage(msg: string): void {
-  sentry?.captureMessage(msg);
+  if (initialized) Sentry.captureMessage(msg);
   logger.info({ msg });
 }

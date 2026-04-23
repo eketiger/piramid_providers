@@ -46,6 +46,24 @@ jobs:
     name: Unit + integration
     runs-on: ubuntu-latest
     needs: install
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: dev
+          MYSQL_DATABASE: piramid
+          MYSQL_USER: piramid
+          MYSQL_PASSWORD: dev
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost -ppiramid"
+          --health-interval=5s
+          --health-timeout=3s
+          --health-retries=20
+    env:
+      # Integration tests target the test schema; setup script spins it up.
+      TEST_DATABASE_URL: mysql://piramid:dev@127.0.0.1:3306/piramid_test
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -62,8 +80,12 @@ jobs:
       - name: Generate Prisma client
         run: pnpm --filter @piramid/api exec prisma generate
 
-      - name: Test (turbo)
-        run: pnpm test
+      - name: Create test database
+        run: |
+          mysql -h 127.0.0.1 -uroot -pdev -e "CREATE DATABASE IF NOT EXISTS piramid_test; GRANT ALL ON piramid_test.* TO 'piramid'@'%'; FLUSH PRIVILEGES;"
+
+      - name: Test with coverage
+        run: pnpm test:coverage
 
       - name: Upload coverage (if any)
         if: always()

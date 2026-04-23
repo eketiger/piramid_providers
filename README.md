@@ -1,72 +1,153 @@
 # Piramid Providers
 
-Plataforma web + API para proveedores de la red de Piramid. Monorepo Turborepo con un frontend Next.js 15, un backend NestJS 11 y contratos zod compartidos.
+Plataforma web + API + docs para proveedores de la red de Piramid. Monorepo Turborepo con frontend Next.js 15, backend NestJS 11, docs (Fumadocs + Scalar) y contratos zod compartidos.
 
 ## Stack
 
 - **Monorepo**: pnpm workspaces + Turborepo
-- **Frontend** (`apps/web`): Next.js 15 App Router, React 19, Tailwind v4, TanStack Query, `openapi-fetch`
-- **Backend** (`apps/api`): NestJS 11, Prisma 6 sobre SQLite (dev) / MySQL (prod), JWT + argon2, Swagger autogenerado, pino structured logs
-- **Contratos** (`packages/types`): zod schemas consumidos tanto por la API (ValidationPipe) como por el web (types de `openapi-fetch`)
-- **Lint/format** (root): ESLint 9 flat config + Prettier (con `prettier-plugin-tailwindcss`)
+- **Frontend** (`apps/web`): Next.js 15 App Router, React 19, Tailwind v4, TanStack Query, `openapi-fetch`, **NextAuth v5 con Google OAuth**, **Mixpanel**, Sentry
+- **Backend** (`apps/api`): NestJS 11, **Prisma 6 sobre MySQL (docker-compose local / Planetscale en prod)** con `relationMode = "prisma"`, JWT + argon2 + **Google ID token verify**, Swagger/OpenAPI, **Scalar API reference**, pino, Sentry
+- **Docs** (`apps/docs`): **Next.js + Fumadocs** para documentación de producto y help-center; iframe con la API reference de Scalar
+- **Infra** (`infra/`): **AWS CDK** — Network / Data (S3 + Secrets) / Api (ECS Fargate + ECR + ALB) / Web (S3 + CloudFront)
+- **Contratos** (`packages/types`): zod schemas — fuente de verdad para API y web
+- **Lint/format** (root): ESLint 9 flat config + Prettier + `prettier-plugin-tailwindcss`
+- **Tests**: Vitest + React Testing Library + Supertest + Playwright; coverage con v8
 
 ## Estructura
 
 ```
 piramid-providers/
 ├─ apps/
-│  ├─ web/                           # Next.js 15
-│  │  └─ src/
-│  │     ├─ app/                     # rutas (auth) + (app) con layout, loading, error, not-found
-│  │     ├─ components/
-│  │     │  ├─ ui/                   # primitivos (button, pill, sla-meter, drawer, tabs, table, …)
-│  │     │  ├─ shell/                # sidebar, topbar, auth-shell, onboarding-banner
-│  │     │  └─ providers/            # QueryProvider
-│  │     ├─ data/fixtures.ts         # mocks mientras el backend se termina
-│  │     └─ lib/
-│  │        ├─ api/                  # openapi-fetch client + typed hooks (TanStack Query)
-│  │        ├─ icons.ts              # registry tipado de lucide
-│  │        └─ format.ts
-│  └─ api/                           # NestJS 11
-│     ├─ prisma/
-│     │  ├─ schema.prisma            # MVP: users, providers, bids, bid_quotes
-│     │  └─ seed.ts
-│     └─ src/
-│        ├─ main.ts                  # bootstrap + Swagger en /api/v1/docs
-│        ├─ app.module.ts
-│        ├─ common/zod-pipe.ts       # ValidationPipe que usa schemas de @piramid/types
-│        ├─ prisma/                  # PrismaService global
-│        └─ modules/
-│           ├─ auth/                 # register, login, me, JwtAuthGuard
-│           ├─ providers/            # /providers/me, /providers/:id
-│           └─ bids/                 # /bids (lista), /bids/:id, /bids/:id/quote
+│  ├─ web/                  # Next.js 15 + NextAuth + TanStack Query
+│  ├─ api/                  # NestJS 11 + Prisma + Swagger/Scalar
+│  └─ docs/                 # Fumadocs product docs + API Reference (Scalar iframe)
 ├─ packages/
-│  └─ types/                         # zod schemas (common, auth, provider, bid, order) + fixtures seeded
-├─ infra/                            # AWS CDK (Network/Data/Api/Web stacks)
+│  └─ types/                # zod schemas compartidos
+├─ infra/                   # AWS CDK stacks
+├─ docker-compose.yml       # MySQL + Redis para dev
 ├─ turbo.json
 ├─ pnpm-workspace.yaml
-├─ eslint.config.mjs                 # aplica a todo el monorepo
-└─ .prettierrc.json
+├─ eslint.config.mjs
+└─ .github/workflows/       # ci.yml + deploy.yml (OIDC → ECR + cdk deploy)
 ```
 
-## Cómo correrlo en local
+## Cómo correrlo en local — paso a paso
+
+### 1) Prerequisitos
+
+- **Node 22+**, **pnpm 10+**, **Docker Desktop** (para MySQL/Redis locales)
+- Puertos libres: **3000** (web), **3100** (docs), **4000** (api), **3306** (mysql), **6379** (redis)
+
+### 2) Instalar y arrancar infra local
 
 ```bash
-# 1. Instalar
+git clone https://github.com/eketiger/piramid_providers.git
+cd piramid_providers
 pnpm install
 
-# 2. DB local
-cd apps/api
-cp .env.example .env
-pnpm exec prisma migrate dev --name init
-pnpm db:seed
-
-# 3. Dev (dos terminales)
-pnpm --filter @piramid/api dev    # http://localhost:4000 (docs en /api/v1/docs)
-pnpm --filter @piramid/web dev    # http://localhost:3000
+# MySQL + Redis en docker
+docker compose up -d
 ```
 
-Credenciales del seed: `en@revelaciondata.com.ar` / `Demo1234`.
+### 3) Inicializar la base de datos
+
+```bash
+cd apps/api
+cp .env.example .env           # ajustar GOOGLE_CLIENT_ID/SECRET si vas a probar Google OAuth
+pnpm exec prisma generate
+pnpm exec prisma db push       # crea el schema contra localhost:3306/piramid
+pnpm db:seed                   # provider demo + 5 licitaciones
+cd ../..
+```
+
+Credenciales del seed: **`en@revelaciondata.com.ar`** / **`Demo1234`**.
+
+### 4) Levantar todo
+
+```bash
+# Con Turborepo (todo en paralelo)
+pnpm dev
+
+# o en terminales separadas:
+pnpm --filter @piramid/api dev    # http://localhost:4000
+pnpm --filter @piramid/web dev    # http://localhost:3000
+pnpm --filter @piramid/docs dev   # http://localhost:3100
+```
+
+Endpoints clave:
+
+| URL                                    | Qué es                                            |
+| -------------------------------------- | ------------------------------------------------- |
+| http://localhost:3000                  | App web (redirige a /inicio)                      |
+| http://localhost:3000/api/healthz      | Liveness del web (Next.js route handler)          |
+| http://localhost:3000/privacy          | Preferencias de cookies + export/delete de datos  |
+| http://localhost:4000/api/v1/healthz   | Liveness del backend + DB check                   |
+| http://localhost:4000/api/v1/reference | **API Reference (Scalar)**                        |
+| http://localhost:4000/api/v1/docs      | Swagger UI legacy                                 |
+| http://localhost:4000/api/v1/docs-json | OpenAPI JSON (consumido por `openapi-typescript`) |
+| http://localhost:3100/docs             | **Product docs + help-center (Fumadocs)**         |
+| http://localhost:3100/api-reference    | API reference embebida                            |
+
+### 5) Flujo con Google OAuth (opcional)
+
+1. En [Google Cloud Console](https://console.cloud.google.com/) creá un OAuth client **Web** con callback `http://localhost:3000/api/auth/callback/google`.
+2. Pegá el `GOOGLE_CLIENT_ID` y `GOOGLE_CLIENT_SECRET` en `apps/web/.env.local` y `apps/api/.env`.
+3. Reiniciá los dev servers y entrá a `/login` → clickeá **Ingresar con Google**.
+4. NextAuth obtiene el `id_token`, lo intercambia contra `POST /auth/google`, la API verifica con las claves de Google y devuelve un JWT de Piramid.
+
+### 6) Validar todo
+
+```bash
+pnpm typecheck      # 5 paquetes verdes
+pnpm lint           # 0 errores
+pnpm format:check   # Prettier OK
+pnpm test           # 72+ tests
+pnpm test:coverage  # web ≥95% + types 100% + api integration (Supertest)
+pnpm build          # turbo build ordenado
+```
+
+Smoke tests:
+
+```bash
+curl -s http://localhost:4000/api/v1/healthz | jq
+curl -s http://localhost:3000/api/healthz | jq
+curl -s -X POST http://localhost:4000/api/v1/auth/login \
+     -H 'Content-Type: application/json' \
+     -d '{"email":"en@revelaciondata.com.ar","password":"Demo1234"}' | jq
+```
+
+### 7) E2E
+
+```bash
+pnpm --filter @piramid/web exec playwright install chromium
+pnpm test:e2e
+```
+
+### 8) Infra (CDK sin credenciales)
+
+```bash
+cd infra
+CDK_DEFAULT_ACCOUNT=000000000000 CDK_DEFAULT_REGION=us-east-1 \
+  pnpm exec cdk synth --quiet
+```
+
+Para deploy real ver `.github/workflows/deploy.yml` — usa OIDC federation, builda el Docker de la API, pushea a ECR y corre `cdk deploy --all`. Necesita estos secrets en el repo:
+
+- `AWS_DEPLOY_ROLE_ARN` → rol con trust relationship a `token.actions.githubusercontent.com`
+- Un bootstrap previo del CDK (`cdk bootstrap`) en la cuenta AWS.
+
+## Cobertura de requisitos funcionales
+
+| #   | Item                                       |                                                     Estado                                                     |
+| --- | ------------------------------------------ | :------------------------------------------------------------------------------------------------------------: |
+| 1   | **CI/CD: GitHub Actions + AWS ECS/ECR**    |       ✅ `ci.yml` (install/test/build/cdk-synth/e2e) + `deploy.yml` con OIDC → ECR → `cdk deploy --all`        |
+| 2   | **Test Coverage**                          |           ✅ Vitest `@vitest/coverage-v8` con thresholds (web ≥95%, types 100%). ~72 tests totales.            |
+| 3   | **Data Privacy: Native**                   |  ✅ Cookie consent banner + `/privacy` + `GET /me/export` + `DELETE /me` + AuditLog + redacción `pino`/Sentry  |
+| 4   | **Analytics: Mixpanel**                    |      ✅ `apps/web/src/lib/analytics.ts` respeta consent; eventos tipados (`auth.signin`, `bid.quoted`, …)      |
+| 5   | **Google Auth: NextAuth**                  |  ✅ `apps/web/src/auth.ts` con `GoogleProvider`; el ID token se canjea por JWT propio en `POST /auth/google`   |
+| 6   | **Database: Planetscale (MySQL) + Prisma** | ✅ `provider = "mysql"` + `relationMode = "prisma"`. Local con docker-compose, prod con Planetscale via secret |
+| 7   | **Fumadocs + Scalar**                      |                    ✅ `apps/docs` (Fumadocs) + Scalar API reference en `/api/v1/reference`                     |
+| 8   | **Health checks**                          |          ✅ `GET /api/v1/healthz` (API + DB `SELECT 1`, expuesto al ALB) + `GET /api/healthz` en web           |
 
 ## Contratos zod compartidos
 
@@ -80,51 +161,28 @@ apps/api/src/modules/bids/*         →  controller + service usan los mismos zo
 apps/web/src/lib/api/hooks/bids.ts  →  useBidsQuery, useBidQuery, useQuoteMutation
 ```
 
-## Principios del HANDOFF respetados
-
-1. **SLA discreto**: verde salvo riesgo real (≥50% → warn, ≥80% o vencido → risk). Regla centralizada en `apps/web/src/lib/format.ts::slaState`.
-2. **Workflow primero**: drawer de cotización sobre el listado; detalle de orden con 6 tabs persistentes.
-3. **Brand editorial**: Archivo Black + naranja Piramid solo en auth/hero/ficha pública. UI operativa en neutrales tierra.
-4. **Desktop-first**: grids densos optimizados para operación.
-
-## Infra (AWS CDK — `infra/`)
-
-Stacks en orden de deploy:
-
-1. **NetworkStack** — VPC con 2 AZs, subnets públicas + privadas, 1 NAT (dev/stage; prod bumpea a 2).
-2. **DataStack** — S3 `piramid-<stage>-uploads` (versioned, SSL-only, lifecycle a Glacier @ 365d) + Secret de Secrets Manager para la URL de DB.
-3. **ApiStack** — ECR repo + ECS Fargate detrás de un ALB público, log group en CloudWatch, healthcheck en `/api/v1/healthz`. Task pulls image de ECR, inyecta `DATABASE_URL` y `SENTRY_DSN` desde Secrets Manager.
-4. **WebStack** — S3 privado + CloudFront con OAC. Behavior `/api/*` hace reverse-proxy al ALB.
-
-Tests de infra snapshotean el template sintetizado (no necesita credenciales AWS):
+Para regenerar los types OpenAPI del web:
 
 ```bash
-pnpm --filter @piramid/infra test   # 3 tests de estructura
-pnpm --filter @piramid/infra synth  # requiere CDK_DEFAULT_ACCOUNT + CDK_DEFAULT_REGION
+pnpm --filter @piramid/web openapi:generate   # exporta spec + corre openapi-typescript
 ```
 
 ## Observabilidad
 
-- **Backend**: `pino-http` en request scope + `logger` structured en jobs/services. `SENTRY_DSN` dispara init del SDK en `main.ts`; sin DSN es no-op.
-- **Frontend**: `NEXT_PUBLIC_SENTRY_DSN` engancha `initObservabilityOnce()` en `error.tsx`. Los `captureException` siguen funcionando como console.error si el SDK no se cargó.
-- **Healthcheck**: `GET /api/v1/healthz` devuelve `{ status, db, uptimeMs, version }`. El ALB rutea basándose en ese endpoint.
+- **Logs**: `pino` structured con redacción de `authorization`, `cookie`, `password`.
+- **Errores**: Sentry (SDK `@sentry/node` en API, `@sentry/browser` en web). Sin DSN en dev = no-op.
+- **Uptime**: `/api/v1/healthz` (API con check de DB) + `/api/healthz` (web).
+- **Audit**: tabla `AuditLog` en Prisma para DSR (export/delete).
 
-## Qué quedó deferido
+## Scripts root (Turborepo)
 
-- **Tests E2E** corriendo contra el backend real (hoy corren contra mocks del web). Se desbloquea una vez que cada vista se conecta a su hook.
-- **Planetscale / RDS real**: el secret existe; falta pegarle a una conexión real (PR chico).
-- Cookies `HttpOnly` + refresh rotativo, 2FA TOTP, BullMQ, S3 presigned uploads de verdad, webhooks externos.
-- Resto de módulos de negocio (orders, reports, schedule, scorecard, notifications, marketplace, audit).
-- Deploy automático desde CI (`cdk deploy` con OIDC federation a AWS) — hoy CI sólo hace `cdk synth`.
-
-## Scripts de root (orquestados por Turborepo)
-
-| Script           | Qué hace                                          |
-| ---------------- | ------------------------------------------------- |
-| `pnpm dev`       | Levanta `apps/web` y `apps/api` en paralelo       |
-| `pnpm build`     | Build ordenado (`@piramid/types` → `api` → `web`) |
-| `pnpm typecheck` | `tsc --noEmit` en todos los paquetes              |
-| `pnpm lint`      | ESLint 9 flat config sobre todo el repo           |
-| `pnpm test`      | Unit tests (Phase 3)                              |
-| `pnpm test:e2e`  | Playwright (Phase 3)                              |
-| `pnpm format`    | Prettier write                                    |
+| Script                         | Qué hace                              |
+| ------------------------------ | ------------------------------------- |
+| `pnpm dev`                     | Levanta los tres apps en paralelo     |
+| `pnpm build`                   | Build ordenado (types → api/docs/web) |
+| `pnpm typecheck`               | `tsc --noEmit` en los 5 paquetes      |
+| `pnpm lint`                    | ESLint 9 flat config                  |
+| `pnpm format` / `format:check` | Prettier                              |
+| `pnpm test`                    | Unit + integration                    |
+| `pnpm test:coverage`           | Idem + coverage v8 con threshold      |
+| `pnpm test:e2e`                | Playwright                            |

@@ -55,19 +55,24 @@ export class DataStack extends Stack {
     });
 
     /**
-     * DB credentials placeholder. Intent:
-     *   - dev/stage: rotate to a real RDS MySQL instance in a follow-up PR.
-     *   - prod: keep using Planetscale (Connection string + password) and
-     *     sync it here via an Admin-account-owned secret.
-     * Keeping the secret skeleton means the API stack can already reference
-     * it without rewiring later.
+     * DB credentials. Populated out-of-band:
+     *   - dev/stage: Planetscale branch (create a service token, paste its
+     *     connection URL with the user/password embedded into the "url" key
+     *     of this secret).
+     *   - prod: Planetscale production branch, same shape.
+     *
+     * We create the secret with a deterministic name and a seed value so
+     * ApiStack can always reference it. The real URL is rotated via the
+     * AWS console or a secret-rotation Lambda; never commit a Planetscale
+     * token to this repo.
      */
     this.dbSecret = new Secret(this, "DbConnectionSecret", {
       secretName: `piramid-${props.stageName}/db/connection-url`,
-      description: "Connection URL for the Piramid providers DB (Prisma DATABASE_URL).",
+      description:
+        "MySQL connection URL for Prisma's DATABASE_URL. Populate with the Planetscale branch URL.",
       generateSecretString: {
         secretStringTemplate: JSON.stringify({
-          url: "mysql://placeholder@localhost:3306/piramid",
+          url: "mysql://piramid:REPLACE_ME@aws.connect.psdb.cloud/piramid?sslaccept=strict",
         }),
         generateStringKey: "rotatingPart",
         excludePunctuation: true,

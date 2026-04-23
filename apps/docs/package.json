@@ -1,0 +1,29 @@
+{
+  "name": "@piramid/docs",
+  "version": "0.3.0",
+  "private": true,
+  "scripts": {
+    "prebuild": "fumadocs-mdx",
+    "predev": "fumadocs-mdx",
+    "pretypecheck": "fumadocs-mdx",
+    "dev": "next dev -p 3100",
+    "build": "next build",
+    "start": "next start -p 3100",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "fumadocs-core": "^14.7.4",
+    "fumadocs-mdx": "^11.3.2",
+    "fumadocs-ui": "^14.7.4",
+    "next": "15.0.3",
+    "react": "19.0.0",
+    "react-dom": "19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.9.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "typescript": "^5.6.3"
+  }
+}

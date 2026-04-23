@@ -21,3 +21,8 @@ apps/api/prisma/test.db-journal
 infra/cdk.out
 infra/.cdk.staging
 infra/cdk.context.json
+apps/docs/.source
+apps/docs/.next
+apps/api/openapi.json
+apps/web/src/lib/api/types.generated.ts
+docker/data
