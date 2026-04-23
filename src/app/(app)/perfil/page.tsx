@@ -9,8 +9,8 @@ import {
   InfoRow,
   Pill,
   Tabs,
-} from "@/components/ui/primitives";
-import { PROVIDER, VERTICALS } from "@/lib/mock-data";
+} from "@/components/ui";
+import { PROVIDER, VERTICALS } from "@/data/fixtures";
 
 export default function PerfilPage() {
   const [section, setSection] = React.useState("datos");

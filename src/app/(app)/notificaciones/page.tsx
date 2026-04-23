@@ -7,14 +7,15 @@ import {
   Icon,
   IconButton,
   Pill,
-} from "@/components/ui/primitives";
-import { NOTIFS } from "@/lib/mock-data";
+} from "@/components/ui";
+import { NOTIFS } from "@/data/fixtures";
 import { cn } from "@/lib/cn";
+import type { IconName } from "@/lib/icons";
 
 type Filter = {
   k: string;
   label: string;
-  icon: string;
+  icon: IconName;
   count?: number;
 };
 

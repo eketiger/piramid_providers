@@ -11,9 +11,9 @@ import {
   SlaMeter,
   Table,
   Tabs,
-} from "@/components/ui/primitives";
-import type { Column } from "@/components/ui/primitives";
-import { ESTADOS_OR, ORDERS, VERTICALS, type Order } from "@/lib/mock-data";
+} from "@/components/ui";
+import type { Column } from "@/components/ui";
+import { ESTADOS_OR, ORDERS, VERTICALS, type Order } from "@/data/fixtures";
 import { money } from "@/lib/format";
 
 export default function OrdenesPage() {

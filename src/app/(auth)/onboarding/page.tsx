@@ -8,9 +8,9 @@ import {
   Icon,
   Pill,
   Stepper,
-} from "@/components/ui/primitives";
+} from "@/components/ui";
 import { PiramidMark } from "@/components/shell/logo";
-import { PROVIDER, VERTICALS } from "@/lib/mock-data";
+import { PROVIDER, VERTICALS } from "@/data/fixtures";
 
 export default function OnboardingPage() {
   const router = useRouter();

@@ -5,8 +5,8 @@ import {
   Button,
   Icon,
   Pill,
-} from "@/components/ui/primitives";
-import { PROVIDER, VERTICALS } from "@/lib/mock-data";
+} from "@/components/ui";
+import { PROVIDER, VERTICALS } from "@/data/fixtures";
 
 export default function MarketplaceProfilePage() {
   const router = useRouter();

@@ -7,8 +7,8 @@ import {
   Icon,
   Pill,
   SearchInput,
-} from "@/components/ui/primitives";
-import { VERTICALS } from "@/lib/mock-data";
+} from "@/components/ui";
+import { VERTICALS } from "@/data/fixtures";
 
 type Provider = {
   id: string;

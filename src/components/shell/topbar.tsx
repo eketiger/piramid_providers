@@ -2,8 +2,8 @@
 
 import * as React from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { Avatar, Button, Icon, IconButton } from "@/components/ui/primitives";
-import { NOTIFS, PROVIDER } from "@/lib/mock-data";
+import { Avatar, Button, Icon, IconButton } from "@/components/ui";
+import { NOTIFS, PROVIDER } from "@/data/fixtures";
 
 const TITLES: Record<string, { title: string; sub?: string }> = {
   "/inicio": { title: "Inicio", sub: "Buen día, Ezequiel. Hoy es martes 22 de abril." },

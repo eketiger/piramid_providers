@@ -51,8 +51,9 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
           {children}
         </div>
         <div style={{ fontSize: 11, color: "var(--fg3)" }}>
-          © 2026 Piramid by Ravel · <a style={{ color: "var(--fg2)" }}>Términos</a> ·{" "}
-          <a style={{ color: "var(--fg2)" }}>Privacidad</a>
+          © 2026 Piramid by Ravel ·{" "}
+          <a href="/legal/terms" style={{ color: "var(--fg2)" }}>Términos</a> ·{" "}
+          <a href="/legal/privacy" style={{ color: "var(--fg2)" }}>Privacidad</a>
         </div>
       </div>
       <div

@@ -8,7 +8,7 @@ import {
   IconButton,
   Pill,
   Table,
-} from "@/components/ui/primitives";
+} from "@/components/ui";
 
 type Attachment = {
   id: number;
