@@ -14,7 +14,12 @@ import { PrismaService } from "../src/prisma/prisma.service";
 
 async function makeService(env: Record<string, string | undefined>) {
   const prev = { ...process.env };
-  Object.assign(process.env, env);
+  // process.env values are always strings — assigning undefined stores the
+  // literal "undefined", which is truthy. Delete the key to actually unset.
+  for (const [k, v] of Object.entries(env)) {
+    if (v === undefined) delete process.env[k];
+    else process.env[k] = v;
+  }
   const mod = await Test.createTestingModule({
     imports: [
       ConfigModule.forRoot({ isGlobal: true, ignoreEnvFile: true }),
