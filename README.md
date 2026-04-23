@@ -1,90 +1,108 @@
 # Piramid Providers
 
-Plataforma web para proveedores de servicios (técnicos, talleres, prestadores médicos, logística) que operan sobre la red de Piramid.
-
-Este repositorio implementa el **frontend Next.js** derivado del prototipo descrito en `HANDOFF.md` y del mock en HTML. Respeta tokens de diseño, brand editorial (Archivo Black + Inter + naranja Piramid) y la jerarquía de flujos (ver oportunidad → cotizar → agendar → reportar).
+Plataforma web + API para proveedores de la red de Piramid. Monorepo Turborepo con un frontend Next.js 15, un backend NestJS 11 y contratos zod compartidos.
 
 ## Stack
 
-- **Next.js 15** (App Router, React 19)
-- **Tailwind CSS v4** con los tokens editoriales del prototipo
-- **TypeScript** estricto
-- **lucide-react** para iconografía
-- Todo el server-state se simula con data determinística en `src/lib/mock-data.ts` — no hay backend en este repo.
-
-## Cómo correrlo
-
-```bash
-pnpm install     # o npm install / yarn
-pnpm dev         # http://localhost:3000
-```
-
-El root (`/`) redirige a `/inicio`. El shell autenticado está en el grupo de rutas `(app)` y no requiere credenciales para demo; podés acceder al flujo de auth vía el botón "Auth demo" del topbar o directamente a `/login`.
+- **Monorepo**: pnpm workspaces + Turborepo
+- **Frontend** (`apps/web`): Next.js 15 App Router, React 19, Tailwind v4, TanStack Query, `openapi-fetch`
+- **Backend** (`apps/api`): NestJS 11, Prisma 6 sobre SQLite (dev) / MySQL (prod), JWT + argon2, Swagger autogenerado, pino structured logs
+- **Contratos** (`packages/types`): zod schemas consumidos tanto por la API (ValidationPipe) como por el web (types de `openapi-fetch`)
+- **Lint/format** (root): ESLint 9 flat config + Prettier (con `prettier-plugin-tailwindcss`)
 
 ## Estructura
 
 ```
-src/
-├─ app/
-│  ├─ (auth)/
-│  │  ├─ login/page.tsx
-│  │  ├─ register/page.tsx
-│  │  └─ onboarding/page.tsx       # wizard de 5 pasos
-│  ├─ (app)/
-│  │  ├─ layout.tsx                # Sidebar + Topbar + OnboardingBanner
-│  │  ├─ inicio/                   # dashboard con KPIs + licitaciones, órdenes, visitas, novedades
-│  │  ├─ licitaciones/             # listado + drawer de cotización (query param id)
-│  │  ├─ ordenes/                  # listado y detalle con 6 tabs (detalle, actividad, novedades, reportes, facturas, visitas)
-│  │  ├─ agenda/                   # día / semana / mes + disponibilidad
-│  │  ├─ reportes/                 # dropzone + tabla de rondas de revisión
-│  │  ├─ perfil/                   # datos, categorías, cobertura, disponibilidad, docs, ficha pública
-│  │  ├─ scorecard/                # score + tendencia + reviews
-│  │  ├─ notificaciones/           # centro con sidebar de filtros
-│  │  ├─ marketplace/              # grid + ficha pública del proveedor
-│  │  └─ cuenta/                   # datos personales, seguridad, prefs de notificación
-│  ├─ globals.css                  # tokens editoriales + utilidades (card, tabs, pills, sla-bar, drawer)
-│  └─ layout.tsx                   # root layout con tipografía (Inter, Archivo Black, JetBrains Mono)
-├─ components/
-│  ├─ shell/                       # Sidebar, Topbar, OnboardingBanner, AuthShell, logo
-│  └─ ui/primitives.tsx            # Icon, Pill, EstadoBadge, Button, SlaMeter, Table, Tabs, Drawer, Modal, Stepper, Field, Stat
-└─ lib/
-   ├─ mock-data.ts                 # VERTICALS, BIDS, ORDERS, VISITS, NOTIFS, PROVIDER (ports del data.jsx del prototipo)
-   ├─ format.ts                    # money() en ARS + helpers de SLA
-   └─ cn.ts
+piramid-providers/
+├─ apps/
+│  ├─ web/                           # Next.js 15
+│  │  └─ src/
+│  │     ├─ app/                     # rutas (auth) + (app) con layout, loading, error, not-found
+│  │     ├─ components/
+│  │     │  ├─ ui/                   # primitivos (button, pill, sla-meter, drawer, tabs, table, …)
+│  │     │  ├─ shell/                # sidebar, topbar, auth-shell, onboarding-banner
+│  │     │  └─ providers/            # QueryProvider
+│  │     ├─ data/fixtures.ts         # mocks mientras el backend se termina
+│  │     └─ lib/
+│  │        ├─ api/                  # openapi-fetch client + typed hooks (TanStack Query)
+│  │        ├─ icons.ts              # registry tipado de lucide
+│  │        └─ format.ts
+│  └─ api/                           # NestJS 11
+│     ├─ prisma/
+│     │  ├─ schema.prisma            # MVP: users, providers, bids, bid_quotes
+│     │  └─ seed.ts
+│     └─ src/
+│        ├─ main.ts                  # bootstrap + Swagger en /api/v1/docs
+│        ├─ app.module.ts
+│        ├─ common/zod-pipe.ts       # ValidationPipe que usa schemas de @piramid/types
+│        ├─ prisma/                  # PrismaService global
+│        └─ modules/
+│           ├─ auth/                 # register, login, me, JwtAuthGuard
+│           ├─ providers/            # /providers/me, /providers/:id
+│           └─ bids/                 # /bids (lista), /bids/:id, /bids/:id/quote
+├─ packages/
+│  └─ types/                         # zod schemas (common, auth, provider, bid, order) + fixtures seeded
+├─ turbo.json
+├─ pnpm-workspace.yaml
+├─ eslint.config.mjs                 # aplica a todo el monorepo
+└─ .prettierrc.json
 ```
 
-## Principios respetados del HANDOFF
+## Cómo correrlo en local
 
-1. **SLA discreto**: la barra de SLA cambia de verde a naranja a rojo solo cuando el riesgo es real. Nunca rojo gratuito.
-2. **Workflow primero, formularios segundo**: cotización y visitas se abren como drawer/modal sobre el listado. El detalle de orden usa tabs persistentes.
-3. **Brand editorial, UI neutra**: Archivo Black + naranja Piramid en auth/hero/ficha pública. El resto, neutrales tierra (`#F6F3EA` papel + `#F1ECDE` sidebar + `#FFFFFF` cards).
-4. **Desktop-first**: grids densos optimizados para operaciones; mobile queda fuera de alcance de esta iteración.
+```bash
+# 1. Instalar
+pnpm install
 
-## Scope no implementado (deferido)
+# 2. DB local
+cd apps/api
+cp .env.example .env
+pnpm exec prisma migrate dev --name init
+pnpm db:seed
 
-El HANDOFF describe un sistema end-to-end mucho más amplio. Este repo cubre el frontend; quedaron **explícitamente fuera de alcance** de esta entrega:
+# 3. Dev (dos terminales)
+pnpm --filter @piramid/api dev    # http://localhost:4000 (docs en /api/v1/docs)
+pnpm --filter @piramid/web dev    # http://localhost:3000
+```
 
-- **Backend NestJS 11** (`apps/api`): módulos de auth, bids, orders, reports, schedule, scorecard, notifications, audit.
-- **Prisma / Planetscale**: schema completo y migraciones.
-- **Monorepo Turborepo + pnpm workspaces** (`apps/*`, `packages/*`): este repo es un app único de Next.js. El paso a monorepo se hace moviendo `src/` a `apps/web/src/` y extrayendo `src/lib/mock-data.ts` → `packages/types/src/fixtures.ts`.
-- **S3 presigned uploads**, BullMQ workers, colas de notificación, scorecard recompute.
-- **JWT + 2FA TOTP**, cookies `piramid_session`, rate limiting.
-- **OpenTelemetry / Sentry / Datadog**, feature flags, CI/CD.
-- **Playwright E2E** sobre los 5 flujos críticos.
-- **`next-intl`** (el copy está hardcoded en español rioplatense).
-- **TanStack Query / Zustand**: los estados son locales a cada vista; al conectar el backend habrá que agregar Query + el cliente `openapi-fetch`.
+Credenciales del seed: `en@revelaciondata.com.ar` / `Demo1234`.
 
-## Decisiones de implementación
+## Contratos zod compartidos
 
-- **Tailwind v4 beta**: usé `@theme { ... }` en `globals.css` para los tokens, junto con clases semánticas legacy (`.card`, `.tabs-list`, `.sla-bar`, `.pill`) portadas del CSS del prototipo. Esto acelera la migración sin pedir rehacer cada vista como clases utilitarias.
-- **Iconos dinámicos**: `<Icon name="gavel" />` resuelve contra `lucide-react` en runtime. Es una compensación pragmática para replicar el patrón `data-lucide` del prototipo sin listar 80 imports nominales.
-- **shadcn sin CLI**: construí los primitives (Drawer, Modal, Tabs, Table) siguiendo el shape shadcn (composable, clases semánticas) pero sin instalar el generador, para mantener el repo liviano. La migración a `shadcn add` sigue siendo trivial.
-- **Datos mock determinísticos**: `BIDS`, `ORDERS`, `VISITS` se generan con una función seeded para que la UI se vea idéntica entre reloads y SSR/CSR.
+`packages/types` es la única fuente de verdad para shape de requests/responses. La API los consume con un `ZodValidationPipe` custom; el frontend los consume vía `openapi-fetch` + `@tanstack/react-query` hooks en `apps/web/src/lib/api/hooks/`.
 
-## Próximos pasos sugeridos
+Ejemplo end-to-end (licitaciones):
 
-1. Extraer `src/lib/mock-data.ts` a `packages/types` y convertir sus types en zod schemas compartidos con el backend.
-2. Levantar `apps/api` con NestJS 11 + el primer módulo (`auth` + `providers`), consumido desde el frontend vía `openapi-fetch`.
-3. Reemplazar los `useState` por `useQuery` para listados (`/bids`, `/orders`) con invalidación por ETag.
-4. Conectar S3 presigned uploads en `reportes` y `perfil/docs`.
-5. Agregar Playwright: login → listar licitaciones → abrir drawer → enviar cotización → verificar toast.
+```
+packages/types/src/schemas/bid.ts   →  Bid, BidQuoteBody, BidListQuery
+apps/api/src/modules/bids/*         →  controller + service usan los mismos zod schemas
+apps/web/src/lib/api/hooks/bids.ts  →  useBidsQuery, useBidQuery, useQuoteMutation
+```
+
+## Principios del HANDOFF respetados
+
+1. **SLA discreto**: verde salvo riesgo real (≥50% → warn, ≥80% o vencido → risk). Regla centralizada en `apps/web/src/lib/format.ts::slaState`.
+2. **Workflow primero**: drawer de cotización sobre el listado; detalle de orden con 6 tabs persistentes.
+3. **Brand editorial**: Archivo Black + naranja Piramid solo en auth/hero/ficha pública. UI operativa en neutrales tierra.
+4. **Desktop-first**: grids densos optimizados para operación.
+
+## Qué quedó deferido (se retoma en Phase 3+)
+
+- **GitHub Actions CI/CD** (Phase 3): `typecheck + lint + build + test + e2e` por paquete.
+- **Tests** (Phase 3): Vitest + RTL en `apps/web`, Supertest en `apps/api`, Playwright E2E.
+- **AWS CDK** (Phase 4): stack mínima de S3 + CloudFront + App Runner/Fargate para API. No se anticipa infra antes de que haya un servicio corriendo.
+- **Sentry + OTel** (Phase 4): `pino` ya está listo del lado API.
+- **Planetscale**, cookies `HttpOnly` + refresh rotativo, 2FA TOTP, BullMQ, presigned S3, webhooks externos.
+- Resto de módulos de negocio (orders, reports, schedule, scorecard, notifications, marketplace, audit).
+
+## Scripts de root (orquestados por Turborepo)
+
+| Script | Qué hace |
+|---|---|
+| `pnpm dev` | Levanta `apps/web` y `apps/api` en paralelo |
+| `pnpm build` | Build ordenado (`@piramid/types` → `api` → `web`) |
+| `pnpm typecheck` | `tsc --noEmit` en todos los paquetes |
+| `pnpm lint` | ESLint 9 flat config sobre todo el repo |
+| `pnpm test` | Unit tests (Phase 3) |
+| `pnpm test:e2e` | Playwright (Phase 3) |
+| `pnpm format` | Prettier write |
