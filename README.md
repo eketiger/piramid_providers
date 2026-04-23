@@ -42,6 +42,7 @@ piramid-providers/
 │           └─ bids/                 # /bids (lista), /bids/:id, /bids/:id/quote
 ├─ packages/
 │  └─ types/                         # zod schemas (common, auth, provider, bid, order) + fixtures seeded
+├─ infra/                            # AWS CDK (Network/Data/Api/Web stacks)
 ├─ turbo.json
 ├─ pnpm-workspace.yaml
 ├─ eslint.config.mjs                 # aplica a todo el monorepo
@@ -86,14 +87,35 @@ apps/web/src/lib/api/hooks/bids.ts  →  useBidsQuery, useBidQuery, useQuoteMuta
 3. **Brand editorial**: Archivo Black + naranja Piramid solo en auth/hero/ficha pública. UI operativa en neutrales tierra.
 4. **Desktop-first**: grids densos optimizados para operación.
 
-## Qué quedó deferido (se retoma en Phase 3+)
+## Infra (AWS CDK — `infra/`)
 
-- **GitHub Actions CI/CD** (Phase 3): `typecheck + lint + build + test + e2e` por paquete.
-- **Tests** (Phase 3): Vitest + RTL en `apps/web`, Supertest en `apps/api`, Playwright E2E.
-- **AWS CDK** (Phase 4): stack mínima de S3 + CloudFront + App Runner/Fargate para API. No se anticipa infra antes de que haya un servicio corriendo.
-- **Sentry + OTel** (Phase 4): `pino` ya está listo del lado API.
-- **Planetscale**, cookies `HttpOnly` + refresh rotativo, 2FA TOTP, BullMQ, presigned S3, webhooks externos.
+Stacks en orden de deploy:
+
+1. **NetworkStack** — VPC con 2 AZs, subnets públicas + privadas, 1 NAT (dev/stage; prod bumpea a 2).
+2. **DataStack** — S3 `piramid-<stage>-uploads` (versioned, SSL-only, lifecycle a Glacier @ 365d) + Secret de Secrets Manager para la URL de DB.
+3. **ApiStack** — ECR repo + ECS Fargate detrás de un ALB público, log group en CloudWatch, healthcheck en `/api/v1/healthz`. Task pulls image de ECR, inyecta `DATABASE_URL` y `SENTRY_DSN` desde Secrets Manager.
+4. **WebStack** — S3 privado + CloudFront con OAC. Behavior `/api/*` hace reverse-proxy al ALB.
+
+Tests de infra snapshotean el template sintetizado (no necesita credenciales AWS):
+
+```bash
+pnpm --filter @piramid/infra test   # 3 tests de estructura
+pnpm --filter @piramid/infra synth  # requiere CDK_DEFAULT_ACCOUNT + CDK_DEFAULT_REGION
+```
+
+## Observabilidad
+
+- **Backend**: `pino-http` en request scope + `logger` structured en jobs/services. `SENTRY_DSN` dispara init del SDK en `main.ts`; sin DSN es no-op.
+- **Frontend**: `NEXT_PUBLIC_SENTRY_DSN` engancha `initObservabilityOnce()` en `error.tsx`. Los `captureException` siguen funcionando como console.error si el SDK no se cargó.
+- **Healthcheck**: `GET /api/v1/healthz` devuelve `{ status, db, uptimeMs, version }`. El ALB rutea basándose en ese endpoint.
+
+## Qué quedó deferido
+
+- **Tests E2E** corriendo contra el backend real (hoy corren contra mocks del web). Se desbloquea una vez que cada vista se conecta a su hook.
+- **Planetscale / RDS real**: el secret existe; falta pegarle a una conexión real (PR chico).
+- Cookies `HttpOnly` + refresh rotativo, 2FA TOTP, BullMQ, S3 presigned uploads de verdad, webhooks externos.
 - Resto de módulos de negocio (orders, reports, schedule, scorecard, notifications, marketplace, audit).
+- Deploy automático desde CI (`cdk deploy` con OIDC federation a AWS) — hoy CI sólo hace `cdk synth`.
 
 ## Scripts de root (orquestados por Turborepo)
 

@@ -18,3 +18,5 @@ apps/api/test.db
 apps/api/test.db-journal
 apps/api/prisma/test.db
 apps/api/prisma/test.db-journal
+infra/cdk.out
+infra/.cdk.staging
