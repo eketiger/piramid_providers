@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { Button, Icon } from "@/components/ui";
+import { captureException, initObservabilityOnce } from "@/lib/observability";
 
 export default function AppError({
   error,
@@ -11,8 +12,7 @@ export default function AppError({
   reset: () => void;
 }) {
   useEffect(() => {
-    // TODO(phase-4-observability): forward to Sentry / OTel exporter.
-    console.error(error);
+    void initObservabilityOnce().then(() => captureException(error));
   }, [error]);
 
   return (

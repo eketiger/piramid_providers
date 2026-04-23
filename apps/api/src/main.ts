@@ -4,8 +4,10 @@ import { ValidationPipe } from "@nestjs/common";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import pinoHttp from "pino-http";
 import { AppModule } from "./app.module";
+import { initSentry } from "./common/sentry";
 
 async function bootstrap() {
+  await initSentry();
   const app = await NestFactory.create(AppModule, { bufferLogs: true });
 
   app.use(
