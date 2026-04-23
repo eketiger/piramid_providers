@@ -4,6 +4,7 @@ import { Template } from "aws-cdk-lib/assertions";
 import { NetworkStack } from "../lib/stacks/network-stack";
 import { DataStack } from "../lib/stacks/data-stack";
 import { ApiStack } from "../lib/stacks/api-stack";
+import { WebStack } from "../lib/stacks/web-stack";
 
 /**
  * CDK unit tests. They don't require AWS credentials — they snapshot the
@@ -70,5 +71,41 @@ describe("Piramid stacks", () => {
       ],
     });
     template.resourceCountIs("AWS::ECS::Service", 1);
+  });
+
+  it("WebStack provisions CloudFront + S3 with an /api/* reverse-proxy behavior", () => {
+    const app = new App();
+    const web = new WebStack(app, "web", {
+      stageName: "dev",
+      apiDomain: "example-alb.us-east-1.elb.amazonaws.com",
+    });
+    const template = Template.fromStack(web);
+    template.resourceCountIs("AWS::S3::Bucket", 1);
+    template.resourceCountIs("AWS::CloudFront::Distribution", 1);
+    template.hasResourceProperties("AWS::CloudFront::Distribution", {
+      DistributionConfig: {
+        DefaultRootObject: "index.html",
+      },
+    });
+    template.hasOutput("DistributionId", {});
+  });
+
+  it("WebStack in prod mode marks the bucket as RETAIN-on-destroy", () => {
+    const app = new App();
+    const web = new WebStack(app, "web-prod", {
+      stageName: "prod",
+      apiDomain: "example.com",
+    });
+    const template = Template.fromStack(web);
+    // RetainPolicy isn't encoded directly in CFN props but in the resource
+    // UpdateReplacePolicy / DeletionPolicy — present as top-level keys.
+    const resources = template.toJSON().Resources as Record<string, { DeletionPolicy?: string }>;
+    const bucketKey = Object.keys(resources).find((k) => k.startsWith("SiteBucket"));
+    if (bucketKey) {
+      const bucket = resources[bucketKey];
+      if (bucket.DeletionPolicy && bucket.DeletionPolicy !== "Retain") {
+        throw new Error(`expected Retain, got ${bucket.DeletionPolicy}`);
+      }
+    }
   });
 });

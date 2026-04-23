@@ -1,14 +1,17 @@
-// Phase 2 MVP schema: auth, providers, bids.
-// SQLite used locally; Planetscale/MySQL (with relationMode = "prisma") is the
-// target for staging/prod. Schema stays provider-agnostic beyond the datasource.
+// Piramid Providers MVP schema.
+// Provider is MySQL so the schema is deployable to Planetscale without
+// changes. `relationMode = "prisma"` is required by Planetscale (no FK
+// constraints at the DB level — Prisma emulates them at the application
+// layer and we must declare every filtered FK as an @@index).
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
 enum UserRole {
@@ -41,77 +44,80 @@ enum Vertical {
 }
 
 model User {
-  id           String   @id @default(cuid())
-  email        String   @unique
+  id           String    @id @default(cuid())
+  email        String    @unique
   passwordHash String
   firstName    String
   lastName     String
   phone        String?
-  role         UserRole @default(owner)
+  role         UserRole  @default(owner)
+  googleId     String?   @unique
   providerId   String?
   provider     Provider? @relation(fields: [providerId], references: [id])
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
 
   @@index([providerId])
+  @@index([deletedAt])
 }
 
 model Provider {
-  id                String         @id @default(cuid())
-  legalName         String
-  tradeName         String
-  cuit              String         @unique
-  email             String
-  phone             String
-  description       String?
-  verticalPrimary   Vertical
-  status            ProviderStatus @default(pending)
-  score             Float          @default(0)
-  cumplimientoSLA   Float          @default(0)
-  tiempoRespuesta   String         @default("--:--")
-  costoVisita       Int            @default(0)
-  satisfaccion      Float          @default(0)
-  volumen           Int            @default(0)
-  retrabajos        Float          @default(0)
-  categorias        String         @default("[]")
-  productos         String         @default("[]")
-  cobertura         String         @default("[]")
-  certificaciones   String         @default("[]")
-  horarios          String?
-  createdAt         DateTime       @default(now())
-  updatedAt         DateTime       @updatedAt
+  id              String         @id @default(cuid())
+  legalName       String
+  tradeName       String
+  cuit            String         @unique
+  email           String
+  phone           String
+  description     String?        @db.Text
+  verticalPrimary Vertical
+  status          ProviderStatus @default(pending)
+  score           Float          @default(0)
+  cumplimientoSLA Float          @default(0)
+  tiempoRespuesta String         @default("--:--")
+  costoVisita     Int            @default(0)
+  satisfaccion    Float          @default(0)
+  volumen         Int            @default(0)
+  retrabajos      Float          @default(0)
+  categorias      String         @default("[]") @db.Text
+  productos       String         @default("[]") @db.Text
+  cobertura       String         @default("[]") @db.Text
+  certificaciones String         @default("[]") @db.Text
+  horarios        String?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
 
-  users             User[]
-  bids              Bid[]
+  users User[]
+  bids  Bid[]
 
   @@index([verticalPrimary, status])
   @@index([score])
 }
 
 model Bid {
-  id              String    @id @default(cuid())
-  code            String    @unique
-  titulo          String
-  descripcion     String
-  vertical        Vertical
-  categoria       String
-  empresa         String
-  ciudad          String
-  cliente         String
-  estado          BidStatus @default(abierta)
-  monto           Int       @default(0)
-  slaPct          Float     @default(0)
-  horasRestantes  Int       @default(0)
-  etapa           String    @default("Cotización")
-  tiempoEstimado  String    @default("--")
-  competidores    Int       @default(0)
-  fechaRegistro   DateTime  @default(now())
-  fechaLimite     DateTime
-  providerId      String
-  provider        Provider  @relation(fields: [providerId], references: [id])
-  quote           BidQuote?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  id             String    @id @default(cuid())
+  code           String    @unique
+  titulo         String
+  descripcion    String    @db.Text
+  vertical       Vertical
+  categoria      String
+  empresa        String
+  ciudad         String
+  cliente        String
+  estado         BidStatus @default(abierta)
+  monto          Int       @default(0)
+  slaPct         Float     @default(0)
+  horasRestantes Int       @default(0)
+  etapa          String    @default("Cotización")
+  tiempoEstimado String    @default("--")
+  competidores   Int       @default(0)
+  fechaRegistro  DateTime  @default(now())
+  fechaLimite    DateTime
+  providerId     String
+  provider       Provider  @relation(fields: [providerId], references: [id])
+  quote          BidQuote?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
   @@index([providerId, estado, fechaLimite])
 }
@@ -124,6 +130,23 @@ model BidQuote {
   partsCost    Int
   total        Int
   commitedDays String
-  notes        String?
+  notes        String?  @db.Text
   sentAt       DateTime @default(now())
+
+  @@index([bidId])
+}
+
+// Audit trail of analytics / privacy events (data export, delete requests)
+// so we can satisfy DSRs without grepping logs.
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String?
+  providerId String?
+  action     String
+  payload    String   @default("{}") @db.Text
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@index([providerId])
+  @@index([action])
 }

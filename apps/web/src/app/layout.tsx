@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { QueryProvider } from "@/components/providers/query-provider";
+import { SessionProvider } from "@/components/providers/session-provider";
+import { CookieBanner } from "@/components/privacy/cookie-banner";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -20,7 +22,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body>
-        <QueryProvider>{children}</QueryProvider>
+        <SessionProvider>
+          <QueryProvider>{children}</QueryProvider>
+          <CookieBanner />
+        </SessionProvider>
       </body>
     </html>
   );

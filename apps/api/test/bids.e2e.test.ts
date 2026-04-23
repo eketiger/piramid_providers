@@ -6,7 +6,7 @@ import { PrismaClient, Vertical, BidStatus, ProviderStatus } from "@prisma/clien
 import { AppModule } from "../src/app.module";
 import * as argon2 from "argon2";
 
-const TEST_DB = "file:./test.db";
+const TEST_DB = process.env.DATABASE_URL ?? "mysql://piramid:dev@localhost:3306/piramid_test";
 
 describe("BidsController (integration)", () => {
   let app: INestApplication;
@@ -19,10 +19,11 @@ describe("BidsController (integration)", () => {
     process.env.JWT_SECRET = "test-secret";
 
     prisma = new PrismaClient({ datasources: { db: { url: TEST_DB } } });
-    await prisma.$executeRawUnsafe("DELETE FROM BidQuote");
-    await prisma.$executeRawUnsafe("DELETE FROM Bid");
-    await prisma.$executeRawUnsafe("DELETE FROM User");
-    await prisma.$executeRawUnsafe("DELETE FROM Provider");
+    await prisma.bidQuote.deleteMany();
+    await prisma.bid.deleteMany();
+    await prisma.user.deleteMany();
+    await prisma.provider.deleteMany();
+    await prisma.auditLog.deleteMany();
 
     const provider = await prisma.provider.create({
       data: {

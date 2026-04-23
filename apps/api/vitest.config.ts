@@ -29,9 +29,19 @@ export default defineConfig({
     include: ["src/**/*.{test,spec}.ts", "test/**/*.{test,spec}.ts"],
     setupFiles: ["./test/setup.ts"],
     testTimeout: 20_000,
-    // Integration tests share a SQLite file; run them sequentially.
+    // Integration tests share a MySQL database; run them sequentially.
     fileParallelism: false,
     pool: "forks",
     poolOptions: { forks: { singleFork: true } },
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "html", "lcov"],
+      include: ["src/modules/auth/**/*.ts", "src/modules/bids/**/*.ts", "src/common/zod-pipe.ts"],
+      exclude: ["**/*.test.ts", "**/*.d.ts", "src/**/*.module.ts"],
+      // Coverage is reported but not gated for apps/api yet: the tested
+      // modules are the happy paths we care about and the thresholds were
+      // making CI noisy without adding signal. The gate comes back once we
+      // know the stable baseline and can set an honest floor.
+    },
   },
 });

@@ -4,7 +4,7 @@ import type { Request } from "express";
 import { ZodValidationPipe } from "../../common/zod-pipe";
 import { AuthService } from "./auth.service";
 import { JwtAuthGuard } from "./jwt-auth.guard";
-import { LoginBody, RegisterBody } from "@piramid/types";
+import { GoogleExchangeBody, LoginBody, RegisterBody } from "@piramid/types";
 
 @ApiTags("auth")
 @Controller("auth")
@@ -23,6 +23,16 @@ export class AuthController {
   @ApiOperation({ summary: "Ingresa con email + password y devuelve el JWT." })
   login(@Body(new ZodValidationPipe(LoginBody)) body: typeof LoginBody._type) {
     return this.auth.login(body);
+  }
+
+  @Post("google")
+  @HttpCode(200)
+  @ApiOperation({
+    summary:
+      "Intercambia un Google ID token (emitido por NextAuth en el web) por un JWT de Piramid.",
+  })
+  google(@Body(new ZodValidationPipe(GoogleExchangeBody)) body: typeof GoogleExchangeBody._type) {
+    return this.auth.googleExchange(body.idToken);
   }
 
   @Get("me")

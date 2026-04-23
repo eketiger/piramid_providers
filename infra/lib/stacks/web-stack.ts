@@ -1,4 +1,4 @@
-import { Duration, RemovalPolicy, Stack, StackProps } from "aws-cdk-lib";
+import { CfnOutput, Duration, RemovalPolicy, Stack, StackProps } from "aws-cdk-lib";
 import { Construct } from "constructs";
 import { BlockPublicAccess, Bucket, BucketEncryption } from "aws-cdk-lib/aws-s3";
 import {
@@ -74,6 +74,11 @@ export class WebStack extends Stack {
           ttl: Duration.seconds(0),
         },
       ],
+    });
+
+    new CfnOutput(this, "DistributionId", {
+      value: this.distribution.distributionId,
+      description: "CloudFront distribution id (used by CI to invalidate)",
     });
   }
 }

@@ -1,0 +1,153 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      stage:
+        description: Stage to deploy
+        required: true
+        default: dev
+        type: choice
+        options: [dev, stage, prod]
+
+permissions:
+  # Required by aws-actions/configure-aws-credentials with OIDC.
+  id-token: write
+  contents: read
+
+concurrency:
+  group: deploy-${{ inputs.stage || 'dev' }}
+  cancel-in-progress: false
+
+env:
+  NODE_VERSION: "22"
+  PNPM_VERSION: "10.33.0"
+  AWS_REGION: us-east-1
+  STAGE: ${{ inputs.stage || 'dev' }}
+
+jobs:
+  build-and-push-api:
+    name: Build + push API image
+    runs-on: ubuntu-latest
+    outputs:
+      image-tag: ${{ steps.meta.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install deps
+        run: pnpm install --frozen-lockfile
+
+      - name: Build API
+        run: pnpm --filter @piramid/api build
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to ECR
+        id: ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Resolve image tag
+        id: meta
+        run: |
+          SHA=${GITHUB_SHA::8}
+          echo "tag=${STAGE}-${SHA}" >> $GITHUB_OUTPUT
+
+      - name: Build + push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: apps/api/Dockerfile
+          push: true
+          tags: |
+            ${{ steps.ecr.outputs.registry }}/piramid-${{ env.STAGE }}/api:${{ steps.meta.outputs.tag }}
+            ${{ steps.ecr.outputs.registry }}/piramid-${{ env.STAGE }}/api:latest
+
+  cdk-deploy:
+    name: cdk deploy ${{ env.STAGE }}
+    runs-on: ubuntu-latest
+    needs: build-and-push-api
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install deps
+        run: pnpm install --frozen-lockfile
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: cdk deploy
+        working-directory: infra
+        env:
+          CDK_DEFAULT_REGION: ${{ env.AWS_REGION }}
+        run: >
+          pnpm exec cdk deploy --all
+          --require-approval=never
+          --context stage=${{ env.STAGE }}
+          --context imageTag=${{ needs.build-and-push-api.outputs.image-tag }}
+
+  sync-web:
+    name: Sync web to S3
+    runs-on: ubuntu-latest
+    needs: cdk-deploy
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install deps
+        run: pnpm install --frozen-lockfile
+
+      - name: Build web
+        run: pnpm --filter @piramid/web build
+        env:
+          NEXT_PUBLIC_API_BASE: https://web-${{ env.STAGE }}.piramid.com.ar/api/v1
+          NEXT_PUBLIC_ENV: ${{ env.STAGE }}
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Sync to S3
+        run: |
+          aws s3 sync apps/web/.next/static s3://piramid-${{ env.STAGE }}-web/_next/static --delete
+          aws s3 sync apps/web/public s3://piramid-${{ env.STAGE }}-web --delete
+
+      - name: Invalidate CloudFront
+        run: |
+          DISTRIBUTION_ID=$(aws cloudformation describe-stacks \
+            --stack-name piramid-${{ env.STAGE }}-web \
+            --query "Stacks[0].Outputs[?OutputKey=='DistributionId'].OutputValue" \
+            --output text)
+          if [ -n "$DISTRIBUTION_ID" ]; then
+            aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths "/*"
+          fi

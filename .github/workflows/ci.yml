@@ -5,6 +5,11 @@ on:
   push:
     branches: [main]
 
+# Needed so the "debug: post log on failure" step can comment on the PR.
+permissions:
+  contents: read
+  pull-requests: write
+
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
@@ -46,6 +51,24 @@ jobs:
     name: Unit + integration
     runs-on: ubuntu-latest
     needs: install
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: dev
+          MYSQL_DATABASE: piramid
+          MYSQL_USER: piramid
+          MYSQL_PASSWORD: dev
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost -ppiramid"
+          --health-interval=5s
+          --health-timeout=3s
+          --health-retries=20
+    env:
+      # Integration tests target the test schema; setup script spins it up.
+      TEST_DATABASE_URL: mysql://piramid:dev@127.0.0.1:3306/piramid_test
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -62,8 +85,55 @@ jobs:
       - name: Generate Prisma client
         run: pnpm --filter @piramid/api exec prisma generate
 
-      - name: Test (turbo)
-        run: pnpm test
+      - name: Wait for MySQL + create test database
+        run: |
+          set -euxo pipefail
+          for i in {1..30}; do
+            mysqladmin -h 127.0.0.1 -uroot -pdev ping --silent && break
+            echo "waiting for mysql ($i/30)..."
+            sleep 2
+          done
+          mysql -h 127.0.0.1 -uroot -pdev -e "SELECT VERSION();"
+          mysql -h 127.0.0.1 -uroot -pdev -e "CREATE DATABASE IF NOT EXISTS piramid_test; GRANT ALL ON piramid_test.* TO 'piramid'@'%'; FLUSH PRIVILEGES;"
+
+      - name: Push test schema (diagnostic)
+        id: db-push
+        run: pnpm --filter @piramid/api test:setup 2>&1 | tee db-push.log
+
+      - name: Test with coverage
+        id: run-tests
+        run: pnpm test:coverage 2>&1 | tee test-output.log
+
+      - name: Post failure log as PR comment
+        if: failure() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            let body = '### CI test job failure\n\n';
+            for (const file of ['db-push.log', 'test-output.log']) {
+              if (fs.existsSync(file)) {
+                const raw = fs.readFileSync(file, 'utf8');
+                const tail = raw.split('\n').slice(-200).join('\n');
+                body += `<details><summary>${file} (last 200 lines)</summary>\n\n\`\`\`\n${tail}\n\`\`\`\n</details>\n\n`;
+              }
+            }
+            await github.rest.issues.createComment({
+              issue_number: context.payload.pull_request.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body,
+            });
+
+      - name: Upload test logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-logs
+          path: |
+            db-push.log
+            test-output.log
+          if-no-files-found: ignore
 
       - name: Upload coverage (if any)
         if: always()
@@ -148,13 +218,34 @@ jobs:
         run: pnpm --filter @piramid/web exec playwright install --with-deps chromium
 
       - name: Run Playwright
-        run: pnpm --filter @piramid/web test:e2e
+        id: run-playwright
+        run: pnpm --filter @piramid/web test:e2e 2>&1 | tee e2e-output.log
+
+      - name: Post e2e failure log as PR comment
+        if: failure() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = 'e2e-output.log';
+            if (!fs.existsSync(path)) return;
+            const raw = fs.readFileSync(path, 'utf8');
+            const tail = raw.split('\n').slice(-300).join('\n');
+            const body = `### Playwright E2E failure\n\n<details><summary>${path} (last 300 lines)</summary>\n\n\`\`\`\n${tail}\n\`\`\`\n</details>`;
+            await github.rest.issues.createComment({
+              issue_number: context.payload.pull_request.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body,
+            });
 
       - name: Upload Playwright report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
-          path: apps/web/playwright-report
+          path: |
+            apps/web/playwright-report
+            e2e-output.log
           retention-days: 7
           if-no-files-found: ignore

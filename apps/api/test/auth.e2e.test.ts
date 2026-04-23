@@ -5,7 +5,7 @@ import request from "supertest";
 import { PrismaClient } from "@prisma/client";
 import { AppModule } from "../src/app.module";
 
-const TEST_DB = "file:./test.db";
+const TEST_DB = process.env.DATABASE_URL ?? "mysql://piramid:dev@localhost:3306/piramid_test";
 
 describe("AuthController (integration)", () => {
   let app: INestApplication;
@@ -16,11 +16,13 @@ describe("AuthController (integration)", () => {
     process.env.JWT_SECRET = "test-secret";
 
     prisma = new PrismaClient({ datasources: { db: { url: TEST_DB } } });
-    // Reset
-    await prisma.$executeRawUnsafe("DELETE FROM BidQuote");
-    await prisma.$executeRawUnsafe("DELETE FROM Bid");
-    await prisma.$executeRawUnsafe("DELETE FROM User");
-    await prisma.$executeRawUnsafe("DELETE FROM Provider");
+    // Reset using the generated API so we're immune to MySQL table-name
+    // case sensitivity and to FK-ordering concerns.
+    await prisma.bidQuote.deleteMany();
+    await prisma.bid.deleteMany();
+    await prisma.user.deleteMany();
+    await prisma.provider.deleteMany();
+    await prisma.auditLog.deleteMany();
 
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule],
@@ -116,6 +118,22 @@ describe("AuthController (integration)", () => {
       .post("/api/v1/auth/register")
       .send({ email: "not-an-email", password: "short" })
       .expect(400);
+    expect(res.body.error.code).toBe("VALIDATION_ERROR");
+  });
+
+  it("POST /auth/google returns 400 GOOGLE_OAUTH_NOT_CONFIGURED when client id is unset", async () => {
+    // The test runner doesn't set GOOGLE_CLIENT_ID by default (test/setup.ts
+    // keeps it unset), so the service should reject the attempt early without
+    // ever touching Google's servers.
+    const res = await request(app.getHttpServer())
+      .post("/api/v1/auth/google")
+      .send({ idToken: "some-id-token-that-looks-legit" })
+      .expect(400);
+    expect(res.body.error.code).toBe("GOOGLE_OAUTH_NOT_CONFIGURED");
+  });
+
+  it("POST /auth/google returns 400 VALIDATION_ERROR when the idToken is missing", async () => {
+    const res = await request(app.getHttpServer()).post("/api/v1/auth/google").send({}).expect(400);
     expect(res.body.error.code).toBe("VALIDATION_ERROR");
   });
 });

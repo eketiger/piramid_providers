@@ -1,13 +1,40 @@
 import { expect, test } from "@playwright/test";
 
+// Mock the NestJS /auth/login so Playwright can run the web in isolation
+// without spinning up the full API + MySQL stack. The important part of
+// these specs is the UX flow, not the authentication crypto — supertest
+// has that covered on the backend side.
+test.beforeEach(async ({ page }) => {
+  await page.route("**/auth/login", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        token: "test-jwt",
+        expiresAt: new Date(Date.now() + 3600_000).toISOString(),
+        user: {
+          id: "u_test",
+          email: "en@revelaciondata.com.ar",
+          firstName: "Ezequiel",
+          lastName: "Niefeld",
+          role: "owner",
+          providerId: "prv_test",
+        },
+      }),
+    });
+  });
+});
+
 test.describe("critical flow: login → licitaciones → drawer → cotizar", () => {
   test("navigates from login to inicio and opens the cotización drawer", async ({ page }) => {
-    // 1. Login (mock flow — the button redirects to /inicio without real auth in Phase 2).
+    // 1. Login.
     await page.goto("/login");
     await expect(page.getByRole("heading", { name: "Ingresar", level: 2 })).toBeVisible();
-    await page.getByRole("button", { name: "Ingresar" }).click();
+    // Two "Ingresar"-prefixed buttons exist ("Ingresar con Google" + the
+    // email submit). Target the submit specifically by exact match.
+    await page.getByRole("button", { name: "Ingresar", exact: true }).click();
 
-    // 2. Dashboard loads with KPIs + "Licitaciones esperando respuesta".
+    // 2. Dashboard loads.
     await expect(page).toHaveURL(/\/inicio$/);
     await expect(page.getByRole("heading", { name: "Inicio", level: 1 })).toBeVisible();
 
