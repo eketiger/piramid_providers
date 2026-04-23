@@ -4,7 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AuthShell } from "@/components/shell/auth-shell";
-import { Button, Checkbox, Field } from "@/components/ui/primitives";
+import { Button, Checkbox, Field } from "@/components/ui";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -60,9 +60,13 @@ export default function LoginPage() {
         }}
       >
         <Checkbox checked={remember} onChange={setRemember} label="Recordarme" />
-        <a style={{ fontSize: 12.5, color: "var(--fg2)", cursor: "pointer" }}>
+        <button
+          type="button"
+          className="bg-transparent border-0 cursor-pointer"
+          style={{ fontSize: 12.5, color: "var(--fg2)" }}
+        >
           ¿Olvidaste tu contraseña?
-        </a>
+        </button>
       </div>
       <Button
         variant="accent"

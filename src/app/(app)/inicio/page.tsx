@@ -10,8 +10,8 @@ import {
   Pill,
   SlaMeter,
   Stat,
-} from "@/components/ui/primitives";
-import { BIDS, NOTIFS, ORDERS, VERTICALS, VISITS } from "@/lib/mock-data";
+} from "@/components/ui";
+import { BIDS, NOTIFS, ORDERS, VERTICALS, VISITS } from "@/data/fixtures";
 
 export default function InicioPage() {
   const router = useRouter();

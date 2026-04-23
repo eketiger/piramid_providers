@@ -4,7 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AuthShell } from "@/components/shell/auth-shell";
-import { Button, Checkbox, Field } from "@/components/ui/primitives";
+import { Button, Checkbox, Field } from "@/components/ui";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -58,8 +58,8 @@ export default function RegisterPage() {
           onChange={setTerms}
           label={
             <span style={{ fontSize: 12, color: "var(--fg2)" }}>
-              Acepto los <a style={{ color: "var(--fg1)" }}>términos</a> y la{" "}
-              <a style={{ color: "var(--fg1)" }}>política de privacidad</a>
+              Acepto los <a href="/legal/terms" style={{ color: "var(--fg1)" }}>términos</a> y la{" "}
+              <a href="/legal/privacy" style={{ color: "var(--fg1)" }}>política de privacidad</a>
             </span>
           }
         />

@@ -1,11 +1,13 @@
 // Mock data ported from the HTML prototype's data.jsx.
 // Pure deterministic fixtures; no state mutation.
 
+import type { IconName } from "@/lib/icons";
+
 export type VerticalKey = "hogar" | "taller" | "medico" | "logistica";
 
 export type Vertical = {
   label: string;
-  icon: string;
+  icon: IconName;
   categories: string[];
   companies: string[];
   jobTitles: string[];
@@ -169,16 +171,8 @@ export const VERTICALS: Record<VerticalKey, Vertical> = {
   },
 };
 
-export type PillVariant =
-  | "success"
-  | "warning"
-  | "danger"
-  | "info"
-  | "accent"
-  | "neutral"
-  | "ghost";
-
-export type Estado = { key: string; label: string; variant: PillVariant };
+import type { Estado } from "@/components/ui";
+export type { Estado };
 
 export const ESTADOS_LIC: Estado[] = [
   { key: "abierta", label: "Abierta", variant: "info" },
@@ -412,7 +406,7 @@ export const VISITS: Visit[] = Array.from({ length: 34 }, (_, i) => {
 export type Notif = {
   id: number;
   tipo: string;
-  icon: string;
+  icon: IconName;
   titulo: string;
   detalle: string;
   tiempo: string;
@@ -434,7 +428,7 @@ export const NOTIFS: Notif[] = [
 ];
 
 export type Activity = {
-  icon: string;
+  icon: IconName;
   titulo: string;
   detalle: string;
   actor: string;

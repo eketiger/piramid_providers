@@ -7,8 +7,8 @@ import {
   IconButton,
   Pill,
   Switch,
-} from "@/components/ui/primitives";
-import { VISITS } from "@/lib/mock-data";
+} from "@/components/ui";
+import { VISITS } from "@/data/fixtures";
 
 export default function AgendaPage() {
   const [view, setView] = React.useState<"dia" | "semana" | "mes">("mes");

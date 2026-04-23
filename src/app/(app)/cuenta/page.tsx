@@ -8,8 +8,8 @@ import {
   Icon,
   Pill,
   Switch,
-} from "@/components/ui/primitives";
-import { PROVIDER } from "@/lib/mock-data";
+} from "@/components/ui";
+import { PROVIDER } from "@/data/fixtures";
 
 export default function CuentaPage() {
   const [twofa, setTwofa] = React.useState(true);
@@ -81,11 +81,11 @@ export default function CuentaPage() {
             <div className="card-title">Preferencias de notificación</div>
           </div>
           <div style={{ padding: 8 }}>
-            {[
-              { label: "Email", hint: "Resumen diario y alertas urgentes", value: emailNotif, onChange: setEmailNotif, icon: "mail" },
-              { label: "Push", hint: "En el navegador y el mobile", value: pushNotif, onChange: setPushNotif, icon: "bell" },
-              { label: "WhatsApp", hint: "Solo para alertas críticas de SLA", value: whatsapp, onChange: setWhatsapp, icon: "message-circle" },
-            ].map((p) => (
+            {([
+              { label: "Email", hint: "Resumen diario y alertas urgentes", value: emailNotif, onChange: setEmailNotif, icon: "mail" as const },
+              { label: "Push", hint: "En el navegador y el mobile", value: pushNotif, onChange: setPushNotif, icon: "bell" as const },
+              { label: "WhatsApp", hint: "Solo para alertas críticas de SLA", value: whatsapp, onChange: setWhatsapp, icon: "message-circle" as const },
+            ]).map((p) => (
               <div
                 key={p.label}
                 style={{

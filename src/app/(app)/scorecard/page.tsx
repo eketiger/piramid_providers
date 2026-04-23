@@ -1,7 +1,7 @@
 "use client";
 
-import { Avatar, Button, Icon, Pill } from "@/components/ui/primitives";
-import { PROVIDER } from "@/lib/mock-data";
+import { Avatar, Button, Icon, Pill } from "@/components/ui";
+import { PROVIDER } from "@/data/fixtures";
 
 export default function ScorecardPage() {
   const monthData = [82, 85, 88, 90, 87, 89, 91, 93, 92, 94, 94, 96];

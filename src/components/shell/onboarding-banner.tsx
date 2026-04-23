@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { Button, Icon, IconButton } from "@/components/ui/primitives";
+import { Button, Icon, IconButton } from "@/components/ui";
 
 export function OnboardingBanner() {
   const [hidden, setHidden] = React.useState(false);

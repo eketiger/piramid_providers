@@ -13,9 +13,9 @@ import {
   SlaMeter,
   Table,
   Tabs,
-} from "@/components/ui/primitives";
-import type { Column } from "@/components/ui/primitives";
-import { BIDS, ESTADOS_LIC, VERTICALS, type Bid } from "@/lib/mock-data";
+} from "@/components/ui";
+import type { Column } from "@/components/ui";
+import { BIDS, ESTADOS_LIC, VERTICALS, type Bid } from "@/data/fixtures";
 import { money } from "@/lib/format";
 
 export default function Page() {

@@ -3,13 +3,15 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Avatar, Icon, IconButton, Pill } from "@/components/ui/primitives";
+import { Avatar, Icon, IconButton, Pill } from "@/components/ui";
 import { PiramidMark } from "./logo";
-import { NOTIFS, PROVIDER } from "@/lib/mock-data";
+import { NOTIFS, PROVIDER } from "@/data/fixtures";
 import { cn } from "@/lib/cn";
 
+import type { IconName } from "@/lib/icons";
+
 type NavItem =
-  | { type: "link"; key: string; href: string; label: string; icon: string; badge?: number }
+  | { type: "link"; key: string; href: string; label: string; icon: IconName; badge?: number }
   | { type: "section"; label: string };
 
 function buildNav(unread: number): NavItem[] {
