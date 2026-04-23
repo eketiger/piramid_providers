@@ -218,13 +218,34 @@ jobs:
         run: pnpm --filter @piramid/web exec playwright install --with-deps chromium
 
       - name: Run Playwright
-        run: pnpm --filter @piramid/web test:e2e
+        id: run-playwright
+        run: pnpm --filter @piramid/web test:e2e 2>&1 | tee e2e-output.log
+
+      - name: Post e2e failure log as PR comment
+        if: failure() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = 'e2e-output.log';
+            if (!fs.existsSync(path)) return;
+            const raw = fs.readFileSync(path, 'utf8');
+            const tail = raw.split('\n').slice(-300).join('\n');
+            const body = `### Playwright E2E failure\n\n<details><summary>${path} (last 300 lines)</summary>\n\n\`\`\`\n${tail}\n\`\`\`\n</details>`;
+            await github.rest.issues.createComment({
+              issue_number: context.payload.pull_request.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body,
+            });
 
       - name: Upload Playwright report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
-          path: apps/web/playwright-report
+          path: |
+            apps/web/playwright-report
+            e2e-output.log
           retention-days: 7
           if-no-files-found: ignore
