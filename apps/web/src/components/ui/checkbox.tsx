@@ -20,7 +20,7 @@ export function Checkbox({
   return (
     <label
       htmlFor={inputId}
-      className="inline-flex items-center gap-2 cursor-pointer text-[13px]"
+      className="inline-flex cursor-pointer items-center gap-2 text-[13px]"
       style={{ color: "var(--fg1)" }}
     >
       <input

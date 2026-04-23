@@ -19,16 +19,14 @@ export default function AppError({
     <div className="page-body">
       <div className="card card-pad flex items-start gap-3">
         <div
-          className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg"
           style={{ background: "var(--danger-wash)", color: "var(--danger)" }}
         >
           <Icon name="alert-triangle" size={18} />
         </div>
         <div className="flex-1">
-          <div className="text-[14px] font-semibold">
-            No pudimos cargar esta sección
-          </div>
-          <div className="text-[12.5px] mt-1" style={{ color: "var(--fg3)" }}>
+          <div className="text-[14px] font-semibold">No pudimos cargar esta sección</div>
+          <div className="mt-1 text-[12.5px]" style={{ color: "var(--fg3)" }}>
             {error.message || "Error inesperado"}
             {error.digest && (
               <>

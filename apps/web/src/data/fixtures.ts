@@ -112,13 +112,7 @@ export const VERTICALS: Record<VerticalKey, Vertical> = {
       "Traslados",
       "Médico clínico",
     ],
-    companies: [
-      "Galeno Salud",
-      "OSDE Asistencia",
-      "Swiss Medical",
-      "Medicus",
-      "Prevención Salud",
-    ],
+    companies: ["Galeno Salud", "OSDE Asistencia", "Swiss Medical", "Medicus", "Prevención Salud"],
     jobTitles: [
       "Kinesio post-operatorio",
       "Control post-parto",
@@ -147,12 +141,7 @@ export const VERTICALS: Record<VerticalKey, Vertical> = {
       "Repuestos aftermarket",
       "Almacenaje",
     ],
-    companies: [
-      "Zurich Flotas",
-      "Allianz Logística",
-      "Mapfre Corp.",
-      "HDI Corp.",
-    ],
+    companies: ["Zurich Flotas", "Allianz Logística", "Mapfre Corp.", "HDI Corp."],
     jobTitles: [
       "Envío repuesto urgente",
       "Retiro equipo dañado",
@@ -160,14 +149,7 @@ export const VERTICALS: Record<VerticalKey, Vertical> = {
       "Devolución garantía",
       "Entrega certificado",
     ],
-    cities: [
-      "Centro logístico Tigre",
-      "Puerto Madero",
-      "Pacheco",
-      "Quilmes",
-      "Pilar",
-      "La Plata",
-    ],
+    cities: ["Centro logístico Tigre", "Puerto Madero", "Pacheco", "Quilmes", "Pilar", "La Plata"],
   },
 };
 
@@ -297,14 +279,7 @@ export type Order = {
   retrabajo: boolean;
 };
 
-const ORDER_VKS: VerticalKey[] = [
-  "hogar",
-  "hogar",
-  "hogar",
-  "taller",
-  "medico",
-  "logistica",
-];
+const ORDER_VKS: VerticalKey[] = ["hogar", "hogar", "hogar", "taller", "medico", "logistica"];
 
 export const ORDERS: Order[] = Array.from({ length: 56 }, (_, i) => {
   const vk = ORDER_VKS[i % 6];
@@ -338,7 +313,9 @@ export const ORDERS: Order[] = Array.from({ length: 56 }, (_, i) => {
     direccion:
       pick(v.cities, i + 37) +
       ", calle " +
-      ["Corrientes", "Rivadavia", "Santa Fe", "Cabildo", "Libertador", "9 de Julio", "Callao"][i % 7] +
+      ["Corrientes", "Rivadavia", "Santa Fe", "Cabildo", "Libertador", "9 de Julio", "Callao"][
+        i % 7
+      ] +
       " " +
       (1000 + i * 13),
     fechaInicio: `${String(startDay).padStart(2, "0")}/04/2026`,
@@ -393,7 +370,9 @@ export const VISITS: Visit[] = Array.from({ length: 34 }, (_, i) => {
     titulo: orden.titulo,
     cliente: orden.cliente,
     direccion: orden.direccion,
-    motivo: ["Diagnóstico", "Retiro", "Reparación", "Control final", "Entrega de presupuesto"][i % 5],
+    motivo: ["Diagnóstico", "Retiro", "Reparación", "Control final", "Entrega de presupuesto"][
+      i % 5
+    ],
     fecha: `2026-04-${String(day).padStart(2, "0")}`,
     hora: `${String(hour).padStart(2, "0")}:${["00", "30"][i % 2]}`,
     duracion: [30, 45, 60, 90, 120][i % 5],
@@ -415,16 +394,106 @@ export type Notif = {
 };
 
 export const NOTIFS: Notif[] = [
-  { id: 1, tipo: "bid", icon: "gavel", titulo: "Nueva licitación recibida", detalle: "LIC-20261042 · Heladera no enfría · Seguros Alfa", tiempo: "hace 4 min", leido: false, critico: false },
-  { id: 2, tipo: "sla", icon: "timer", titulo: "SLA por vencer", detalle: "ORD-20265012 vence en 2h 15min — cargar diagnóstico", tiempo: "hace 12 min", leido: false, critico: true },
-  { id: 3, tipo: "comment", icon: "message-square", titulo: "Nueva observación del tramitador", detalle: 'ORD-20265018 · "Adjuntar foto del daño en detalle"', tiempo: "hace 34 min", leido: false, critico: false },
-  { id: 4, tipo: "order", icon: "clipboard-check", titulo: "Orden asignada", detalle: "ORD-20265055 · Split no prende · La Caja", tiempo: "hace 1 h", leido: false, critico: false },
-  { id: 5, tipo: "doc", icon: "file-check-2", titulo: "Presupuesto aprobado", detalle: "ORD-20265009 · Podés iniciar ejecución", tiempo: "hace 2 h", leido: true, critico: false },
-  { id: 6, tipo: "invoice", icon: "receipt", titulo: "Factura conformada", detalle: "ORD-20265001 · Pago estimado 28/04/2026", tiempo: "hace 5 h", leido: true, critico: false },
-  { id: 7, tipo: "bid", icon: "gavel", titulo: "Licitación adjudicada", detalle: "LIC-20261011 — felicitaciones, se generó la ORD-20265056", tiempo: "hace 8 h", leido: true, critico: false },
-  { id: 8, tipo: "score", icon: "trending-up", titulo: "Tu score subió a 4.7", detalle: "Seguís entre el top 10% de proveedores", tiempo: "ayer", leido: true, critico: false },
-  { id: 9, tipo: "doc", icon: "file-warning", titulo: "Documentación por vencer", detalle: "Certificado AFIP vence en 11 días", tiempo: "ayer", leido: true, critico: false },
-  { id: 10, tipo: "visit", icon: "calendar", titulo: "Visita confirmada por cliente", detalle: "VIS-3012 · Jueves 23/04 · 10:30", tiempo: "ayer", leido: true, critico: false },
+  {
+    id: 1,
+    tipo: "bid",
+    icon: "gavel",
+    titulo: "Nueva licitación recibida",
+    detalle: "LIC-20261042 · Heladera no enfría · Seguros Alfa",
+    tiempo: "hace 4 min",
+    leido: false,
+    critico: false,
+  },
+  {
+    id: 2,
+    tipo: "sla",
+    icon: "timer",
+    titulo: "SLA por vencer",
+    detalle: "ORD-20265012 vence en 2h 15min — cargar diagnóstico",
+    tiempo: "hace 12 min",
+    leido: false,
+    critico: true,
+  },
+  {
+    id: 3,
+    tipo: "comment",
+    icon: "message-square",
+    titulo: "Nueva observación del tramitador",
+    detalle: 'ORD-20265018 · "Adjuntar foto del daño en detalle"',
+    tiempo: "hace 34 min",
+    leido: false,
+    critico: false,
+  },
+  {
+    id: 4,
+    tipo: "order",
+    icon: "clipboard-check",
+    titulo: "Orden asignada",
+    detalle: "ORD-20265055 · Split no prende · La Caja",
+    tiempo: "hace 1 h",
+    leido: false,
+    critico: false,
+  },
+  {
+    id: 5,
+    tipo: "doc",
+    icon: "file-check-2",
+    titulo: "Presupuesto aprobado",
+    detalle: "ORD-20265009 · Podés iniciar ejecución",
+    tiempo: "hace 2 h",
+    leido: true,
+    critico: false,
+  },
+  {
+    id: 6,
+    tipo: "invoice",
+    icon: "receipt",
+    titulo: "Factura conformada",
+    detalle: "ORD-20265001 · Pago estimado 28/04/2026",
+    tiempo: "hace 5 h",
+    leido: true,
+    critico: false,
+  },
+  {
+    id: 7,
+    tipo: "bid",
+    icon: "gavel",
+    titulo: "Licitación adjudicada",
+    detalle: "LIC-20261011 — felicitaciones, se generó la ORD-20265056",
+    tiempo: "hace 8 h",
+    leido: true,
+    critico: false,
+  },
+  {
+    id: 8,
+    tipo: "score",
+    icon: "trending-up",
+    titulo: "Tu score subió a 4.7",
+    detalle: "Seguís entre el top 10% de proveedores",
+    tiempo: "ayer",
+    leido: true,
+    critico: false,
+  },
+  {
+    id: 9,
+    tipo: "doc",
+    icon: "file-warning",
+    titulo: "Documentación por vencer",
+    detalle: "Certificado AFIP vence en 11 días",
+    tiempo: "ayer",
+    leido: true,
+    critico: false,
+  },
+  {
+    id: 10,
+    tipo: "visit",
+    icon: "calendar",
+    titulo: "Visita confirmada por cliente",
+    detalle: "VIS-3012 · Jueves 23/04 · 10:30",
+    tiempo: "ayer",
+    leido: true,
+    critico: false,
+  },
 ];
 
 export type Activity = {
@@ -437,12 +506,48 @@ export type Activity = {
 
 export function makeActivity(_orderId: string): Activity[] {
   return [
-    { icon: "file-plus", titulo: "Orden creada", detalle: "Asignada desde LIC-20261011", actor: "Sistema", tiempo: "19/04/2026 09:02" },
-    { icon: "user-check", titulo: "Proveedor aceptó la orden", detalle: "Dentro del SLA de respuesta (28 min)", actor: "Vos", tiempo: "19/04/2026 09:30" },
-    { icon: "calendar-plus", titulo: "Visita agendada", detalle: "Jueves 23/04/2026 10:30 — Diagnóstico", actor: "Vos", tiempo: "19/04/2026 11:14" },
-    { icon: "message-square", titulo: "Mensaje del tramitador", detalle: '"Por favor confirmar con el asegurado antes de la visita"', actor: "E. Niefeld", tiempo: "19/04/2026 15:47" },
-    { icon: "camera", titulo: "Diagnóstico cargado", detalle: "3 fotos · Informe técnico (PDF 1.2 MB)", actor: "Vos", tiempo: "20/04/2026 10:18" },
-    { icon: "check-circle-2", titulo: "Presupuesto enviado", detalle: "$ 342.900 · 2 ítems (mano de obra + repuesto)", actor: "Vos", tiempo: "20/04/2026 14:22" },
+    {
+      icon: "file-plus",
+      titulo: "Orden creada",
+      detalle: "Asignada desde LIC-20261011",
+      actor: "Sistema",
+      tiempo: "19/04/2026 09:02",
+    },
+    {
+      icon: "user-check",
+      titulo: "Proveedor aceptó la orden",
+      detalle: "Dentro del SLA de respuesta (28 min)",
+      actor: "Vos",
+      tiempo: "19/04/2026 09:30",
+    },
+    {
+      icon: "calendar-plus",
+      titulo: "Visita agendada",
+      detalle: "Jueves 23/04/2026 10:30 — Diagnóstico",
+      actor: "Vos",
+      tiempo: "19/04/2026 11:14",
+    },
+    {
+      icon: "message-square",
+      titulo: "Mensaje del tramitador",
+      detalle: '"Por favor confirmar con el asegurado antes de la visita"',
+      actor: "E. Niefeld",
+      tiempo: "19/04/2026 15:47",
+    },
+    {
+      icon: "camera",
+      titulo: "Diagnóstico cargado",
+      detalle: "3 fotos · Informe técnico (PDF 1.2 MB)",
+      actor: "Vos",
+      tiempo: "20/04/2026 10:18",
+    },
+    {
+      icon: "check-circle-2",
+      titulo: "Presupuesto enviado",
+      detalle: "$ 342.900 · 2 ítems (mano de obra + repuesto)",
+      actor: "Vos",
+      tiempo: "20/04/2026 14:22",
+    },
   ];
 }
 
@@ -471,7 +576,16 @@ export const PROVIDER = {
   volumen: 127,
   retrabajos: 2.1,
   calidad: 4.6,
-  cobertura: ["CABA", "Vicente López", "San Isidro", "San Martín", "Tigre", "Pilar", "Olivos", "Martínez"],
+  cobertura: [
+    "CABA",
+    "Vicente López",
+    "San Isidro",
+    "San Martín",
+    "Tigre",
+    "Pilar",
+    "Olivos",
+    "Martínez",
+  ],
   horarios: "Lun–Vie 08:00–19:00 · Sáb 09:00–13:00",
   logo: null,
   estadoOnboarding: "aprobado",

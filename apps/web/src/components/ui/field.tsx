@@ -45,18 +45,15 @@ export function InfoRow({
   value: React.ReactNode;
 }) {
   return (
-    <div className="flex gap-2.5 items-start">
+    <div className="flex items-start gap-2.5">
       <div style={{ color: "var(--fg3)", marginTop: 2 }}>
         <Icon name={icon} size={13} />
       </div>
       <div>
-        <div
-          className="text-[11px] uppercase tracking-[0.04em]"
-          style={{ color: "var(--fg3)" }}
-        >
+        <div className="text-[11px] tracking-[0.04em] uppercase" style={{ color: "var(--fg3)" }}>
           {label}
         </div>
-        <div className="text-[13px] font-medium mt-0.5" style={{ color: "var(--fg1)" }}>
+        <div className="mt-0.5 text-[13px] font-medium" style={{ color: "var(--fg1)" }}>
           {value}
         </div>
       </div>

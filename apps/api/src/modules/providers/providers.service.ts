@@ -41,9 +41,7 @@ export class ProvidersService {
         categorias: body.categorias ? JSON.stringify(body.categorias) : undefined,
         productos: body.productos ? JSON.stringify(body.productos) : undefined,
         cobertura: body.cobertura ? JSON.stringify(body.cobertura) : undefined,
-        certificaciones: body.certificaciones
-          ? JSON.stringify(body.certificaciones)
-          : undefined,
+        certificaciones: body.certificaciones ? JSON.stringify(body.certificaciones) : undefined,
       },
     });
     return toProviderDto(row);

@@ -4,10 +4,10 @@ import { Button, EmptyState } from "@/components/ui";
 export default function NotFound() {
   return (
     <div
-      className="min-h-screen flex items-center justify-center p-6"
+      className="flex min-h-screen items-center justify-center p-6"
       style={{ background: "var(--bg-app)" }}
     >
-      <div className="card max-w-md w-full">
+      <div className="card w-full max-w-md">
         <EmptyState
           icon="help-circle"
           title="Página no encontrada"

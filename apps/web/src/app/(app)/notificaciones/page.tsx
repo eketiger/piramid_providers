@@ -1,13 +1,7 @@
 "use client";
 
 import * as React from "react";
-import {
-  Button,
-  EmptyState,
-  Icon,
-  IconButton,
-  Pill,
-} from "@/components/ui";
+import { Button, EmptyState, Icon, IconButton, Pill } from "@/components/ui";
 import { NOTIFS } from "@/data/fixtures";
 import { cn } from "@/lib/cn";
 import type { IconName } from "@/lib/icons";
@@ -23,7 +17,12 @@ export default function NotificacionesPage() {
   const [filter, setFilter] = React.useState("todo");
   const filters: Filter[] = [
     { k: "todo", label: "Todo", icon: "inbox", count: NOTIFS.length },
-    { k: "unread", label: "Sin leer", icon: "circle", count: NOTIFS.filter((n) => !n.leido).length },
+    {
+      k: "unread",
+      label: "Sin leer",
+      icon: "circle",
+      count: NOTIFS.filter((n) => !n.leido).length,
+    },
     { k: "bid", label: "Licitaciones", icon: "gavel" },
     { k: "order", label: "Órdenes", icon: "clipboard-list" },
     { k: "sla", label: "SLA", icon: "timer" },
@@ -34,10 +33,7 @@ export default function NotificacionesPage() {
   ];
 
   const filtered = NOTIFS.filter(
-    (n) =>
-      filter === "todo" ||
-      (filter === "unread" && !n.leido) ||
-      filter === n.tipo,
+    (n) => filter === "todo" || (filter === "unread" && !n.leido) || filter === n.tipo,
   );
 
   return (

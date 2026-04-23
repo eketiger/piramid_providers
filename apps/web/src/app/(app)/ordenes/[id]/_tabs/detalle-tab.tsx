@@ -26,9 +26,9 @@ export function DetalleTab({ order }: { order: Order }) {
       <div className="card card-pad">
         <div className="eyebrow mb-3">Descripción y alcance</div>
         <p className="text-[13px] leading-relaxed" style={{ color: "var(--fg2)" }}>
-          Servicio originado por denuncia del asegurado. Se requiere diagnóstico inicial en
-          sitio, presupuesto desglosado por mano de obra y repuestos, ejecución dentro del plazo
-          acordado y entrega de informe final con fotos antes/después.
+          Servicio originado por denuncia del asegurado. Se requiere diagnóstico inicial en sitio,
+          presupuesto desglosado por mano de obra y repuestos, ejecución dentro del plazo acordado y
+          entrega de informe final con fotos antes/después.
         </p>
         <div className="divider" />
         <div className="eyebrow mb-2.5">Condiciones comerciales</div>

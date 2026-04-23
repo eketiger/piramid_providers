@@ -15,8 +15,7 @@ async function main() {
       cuit: "30-71298764-3",
       email: "contacto@tecnicaaustral.com.ar",
       phone: "+54 9 11 5123-4587",
-      description:
-        "Servicio técnico de electrodomésticos línea blanca y climatización.",
+      description: "Servicio técnico de electrodomésticos línea blanca y climatización.",
       verticalPrimary: Vertical.hogar,
       status: ProviderStatus.approved,
       score: 4.7,
@@ -26,23 +25,9 @@ async function main() {
       satisfaccion: 4.8,
       volumen: 127,
       retrabajos: 2.1,
-      categorias: JSON.stringify([
-        "Electro línea blanca",
-        "Aire acondicionado",
-        "Electro pequeño",
-      ]),
-      productos: JSON.stringify([
-        "Heladeras",
-        "Lavarropas",
-        "Secarropas",
-        "Split",
-      ]),
-      cobertura: JSON.stringify([
-        "CABA",
-        "Vicente López",
-        "San Isidro",
-        "Pilar",
-      ]),
+      categorias: JSON.stringify(["Electro línea blanca", "Aire acondicionado", "Electro pequeño"]),
+      productos: JSON.stringify(["Heladeras", "Lavarropas", "Secarropas", "Split"]),
+      cobertura: JSON.stringify(["CABA", "Vicente López", "San Isidro", "Pilar"]),
       certificaciones: JSON.stringify(["Samsung", "BGH", "Whirlpool"]),
       horarios: "Lun–Vie 08:00–19:00 · Sáb 09:00–13:00",
     },
@@ -78,8 +63,7 @@ async function main() {
       create: {
         code,
         titulo: titles[i],
-        descripcion:
-          "Se requiere cotización y propuesta de ejecución en base a diagnóstico.",
+        descripcion: "Se requiere cotización y propuesta de ejecución en base a diagnóstico.",
         vertical: Vertical.hogar,
         categoria: "Electro línea blanca",
         empresa: "Seguros Alfa",

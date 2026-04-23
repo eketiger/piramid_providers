@@ -23,14 +23,11 @@ export default function GlobalError({
           justifyContent: "center",
           padding: 24,
           background: "#F6F3EA",
-          fontFamily:
-            "Inter, ui-sans-serif, system-ui, sans-serif",
+          fontFamily: "Inter, ui-sans-serif, system-ui, sans-serif",
         }}
       >
         <div style={{ maxWidth: 420 }}>
-          <h1 style={{ fontSize: 20, fontWeight: 600, margin: 0 }}>
-            Algo salió mal
-          </h1>
+          <h1 style={{ fontSize: 20, fontWeight: 600, margin: 0 }}>Algo salió mal</h1>
           <p style={{ fontSize: 13, color: "#8A857A", marginTop: 8 }}>
             Estamos al tanto. Podés reintentar o volver al inicio.
           </p>

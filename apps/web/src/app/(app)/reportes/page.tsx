@@ -1,14 +1,7 @@
 "use client";
 
 import * as React from "react";
-import {
-  Button,
-  EstadoBadge,
-  Icon,
-  IconButton,
-  Pill,
-  Table,
-} from "@/components/ui";
+import { Button, EstadoBadge, Icon, IconButton, Pill, Table } from "@/components/ui";
 
 type Attachment = {
   id: number;
@@ -23,10 +16,42 @@ type Attachment = {
 export default function ReportesPage() {
   const [dragging, setDragging] = React.useState(false);
   const files: Attachment[] = [
-    { id: 1, nombre: "diagnostico-inicial.pdf", tipo: "pdf", tam: "1.2 MB", fecha: "20/04/2026", estado: "aprobado", ronda: 1 },
-    { id: 2, nombre: "foto-daño-01.jpg", tipo: "image", tam: "3.8 MB", fecha: "20/04/2026", estado: "aprobado", ronda: 1 },
-    { id: 3, nombre: "foto-daño-02.jpg", tipo: "image", tam: "2.1 MB", fecha: "20/04/2026", estado: "aprobado", ronda: 1 },
-    { id: 4, nombre: "presupuesto-v2.pdf", tipo: "pdf", tam: "480 KB", fecha: "21/04/2026", estado: "pendiente", ronda: 2 },
+    {
+      id: 1,
+      nombre: "diagnostico-inicial.pdf",
+      tipo: "pdf",
+      tam: "1.2 MB",
+      fecha: "20/04/2026",
+      estado: "aprobado",
+      ronda: 1,
+    },
+    {
+      id: 2,
+      nombre: "foto-daño-01.jpg",
+      tipo: "image",
+      tam: "3.8 MB",
+      fecha: "20/04/2026",
+      estado: "aprobado",
+      ronda: 1,
+    },
+    {
+      id: 3,
+      nombre: "foto-daño-02.jpg",
+      tipo: "image",
+      tam: "2.1 MB",
+      fecha: "20/04/2026",
+      estado: "aprobado",
+      ronda: 1,
+    },
+    {
+      id: 4,
+      nombre: "presupuesto-v2.pdf",
+      tipo: "pdf",
+      tam: "480 KB",
+      fecha: "21/04/2026",
+      estado: "pendiente",
+      ronda: 2,
+    },
   ];
 
   return (

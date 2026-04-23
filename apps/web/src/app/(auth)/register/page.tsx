@@ -58,8 +58,14 @@ export default function RegisterPage() {
           onChange={setTerms}
           label={
             <span style={{ fontSize: 12, color: "var(--fg2)" }}>
-              Acepto los <a href="/legal/terms" style={{ color: "var(--fg1)" }}>términos</a> y la{" "}
-              <a href="/legal/privacy" style={{ color: "var(--fg1)" }}>política de privacidad</a>
+              Acepto los{" "}
+              <a href="/legal/terms" style={{ color: "var(--fg1)" }}>
+                términos
+              </a>{" "}
+              y la{" "}
+              <a href="/legal/privacy" style={{ color: "var(--fg1)" }}>
+                política de privacidad
+              </a>
             </span>
           }
         />
@@ -81,10 +87,7 @@ export default function RegisterPage() {
         }}
       >
         ¿Ya tenés cuenta?{" "}
-        <Link
-          href="/login"
-          style={{ color: "var(--fg1)", fontWeight: 500, cursor: "pointer" }}
-        >
+        <Link href="/login" style={{ color: "var(--fg1)", fontWeight: 500, cursor: "pointer" }}>
           Ingresá
         </Link>
       </div>

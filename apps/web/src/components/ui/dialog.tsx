@@ -43,7 +43,7 @@ export function Modal({
               {title}
             </div>
             {subtitle && (
-              <div className="text-xs mt-0.5" style={{ color: "var(--fg3)" }}>
+              <div className="mt-0.5 text-xs" style={{ color: "var(--fg3)" }}>
                 {subtitle}
               </div>
             )}
@@ -89,14 +89,14 @@ export function Drawer({
         aria-labelledby="drawer-title"
       >
         <div className="modal-head flex-shrink-0">
-          <div className="flex items-center gap-2.5 min-w-0">
+          <div className="flex min-w-0 items-center gap-2.5">
             <IconButton icon="x" onClick={onClose} title="Cerrar" aria-label="Cerrar" />
             <div className="min-w-0">
-              <div id="drawer-title" className="text-[15px] font-semibold truncate">
+              <div id="drawer-title" className="truncate text-[15px] font-semibold">
                 {title}
               </div>
               {subtitle && (
-                <div className="text-xs mt-0.5" style={{ color: "var(--fg3)" }}>
+                <div className="mt-0.5 text-xs" style={{ color: "var(--fg3)" }}>
                   {subtitle}
                 </div>
               )}

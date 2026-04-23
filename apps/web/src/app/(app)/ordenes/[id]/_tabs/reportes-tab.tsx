@@ -11,10 +11,42 @@ type File = {
 };
 
 const FILES: File[] = [
-  { id: 1, nombre: "diagnostico-inicial.pdf", tipo: "pdf", tam: "1.2 MB", fecha: "20/04/2026", estado: "aprobado", ronda: 1 },
-  { id: 2, nombre: "foto-daño-01.jpg", tipo: "image", tam: "3.8 MB", fecha: "20/04/2026", estado: "aprobado", ronda: 1 },
-  { id: 3, nombre: "foto-daño-02.jpg", tipo: "image", tam: "2.1 MB", fecha: "20/04/2026", estado: "aprobado", ronda: 1 },
-  { id: 4, nombre: "presupuesto-v2.pdf", tipo: "pdf", tam: "480 KB", fecha: "21/04/2026", estado: "pendiente", ronda: 2 },
+  {
+    id: 1,
+    nombre: "diagnostico-inicial.pdf",
+    tipo: "pdf",
+    tam: "1.2 MB",
+    fecha: "20/04/2026",
+    estado: "aprobado",
+    ronda: 1,
+  },
+  {
+    id: 2,
+    nombre: "foto-daño-01.jpg",
+    tipo: "image",
+    tam: "3.8 MB",
+    fecha: "20/04/2026",
+    estado: "aprobado",
+    ronda: 1,
+  },
+  {
+    id: 3,
+    nombre: "foto-daño-02.jpg",
+    tipo: "image",
+    tam: "2.1 MB",
+    fecha: "20/04/2026",
+    estado: "aprobado",
+    ronda: 1,
+  },
+  {
+    id: 4,
+    nombre: "presupuesto-v2.pdf",
+    tipo: "pdf",
+    tam: "480 KB",
+    fecha: "21/04/2026",
+    estado: "pendiente",
+    ronda: 2,
+  },
 ];
 
 export function ReportesTab() {
@@ -36,7 +68,7 @@ export function ReportesTab() {
             render: (r) => (
               <div className="flex items-center gap-2.5">
                 <div
-                  className="w-8 h-8 rounded-md flex items-center justify-center"
+                  className="flex h-8 w-8 items-center justify-center rounded-md"
                   style={{
                     background: r.tipo === "pdf" ? "var(--danger-wash)" : "var(--info-wash)",
                     color: r.tipo === "pdf" ? "var(--danger)" : "var(--info)",
@@ -53,7 +85,11 @@ export function ReportesTab() {
               </div>
             ),
           },
-          { header: "Tipo", render: (r) => (r.tipo === "pdf" ? "Documento" : "Imagen"), style: { width: 110 } },
+          {
+            header: "Tipo",
+            render: (r) => (r.tipo === "pdf" ? "Documento" : "Imagen"),
+            style: { width: 110 },
+          },
           { header: "Ronda", render: (r) => `Ronda ${r.ronda}`, style: { width: 90 } },
           {
             header: "Subido",

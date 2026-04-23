@@ -63,11 +63,7 @@ export function Table<T extends { id?: string | number }>({
             >
               {columns.map((c, j) => (
                 <td key={j} style={c.cellStyle}>
-                  {c.render
-                    ? c.render(r, i)
-                    : c.key
-                      ? (r[c.key] as React.ReactNode)
-                      : null}
+                  {c.render ? c.render(r, i) : c.key ? (r[c.key] as React.ReactNode) : null}
                 </td>
               ))}
             </tr>

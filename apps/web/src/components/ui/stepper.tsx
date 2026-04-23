@@ -3,10 +3,16 @@ import { Icon } from "./icon";
 
 export function Stepper({ steps, current }: { steps: string[]; current: number }) {
   return (
-    <div className="flex items-center gap-1" role="progressbar" aria-valuenow={current + 1} aria-valuemin={1} aria-valuemax={steps.length}>
+    <div
+      className="flex items-center gap-1"
+      role="progressbar"
+      aria-valuenow={current + 1}
+      aria-valuemin={1}
+      aria-valuemax={steps.length}
+    >
       {steps.map((s, i) => (
         <React.Fragment key={i}>
-          <div className="flex flex-col items-center gap-1.5 min-w-[80px]">
+          <div className="flex min-w-[80px] flex-col items-center gap-1.5">
             <div
               style={{
                 width: 22,
@@ -38,7 +44,7 @@ export function Stepper({ steps, current }: { steps: string[]; current: number }
           </div>
           {i < steps.length - 1 && (
             <div
-              className="flex-1 h-[2px] self-start mt-2.5 min-w-[24px]"
+              className="mt-2.5 h-[2px] min-w-[24px] flex-1 self-start"
               style={{ background: i < current ? "var(--fg1)" : "#EFECE1" }}
             />
           )}

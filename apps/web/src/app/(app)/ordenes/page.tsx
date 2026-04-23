@@ -32,8 +32,7 @@ export default function OrdenesPage() {
     if (estado && o.estado.key !== estado) return false;
     if (search) {
       const q = search.toLowerCase();
-      if (!`${o.id} ${o.titulo} ${o.empresa} ${o.cliente}`.toLowerCase().includes(q))
-        return false;
+      if (!`${o.id} ${o.titulo} ${o.empresa} ${o.cliente}`.toLowerCase().includes(q)) return false;
     }
     return true;
   });
@@ -42,9 +41,8 @@ export default function OrdenesPage() {
     {
       key: "activas",
       label: "Activas",
-      count: ORDERS.filter(
-        (o) => !["finalizada", "facturada", "rechazada"].includes(o.estado.key),
-      ).length,
+      count: ORDERS.filter((o) => !["finalizada", "facturada", "rechazada"].includes(o.estado.key))
+        .length,
     },
     { key: "todas", label: "Todas", count: ORDERS.length },
     {

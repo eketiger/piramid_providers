@@ -35,11 +35,7 @@ export default function LoginPage() {
         Accedé con tu cuenta de proveedor.
       </div>
       <Field label="Email">
-        <input
-          className="input"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+        <input className="input" value={email} onChange={(e) => setEmail(e.target.value)} />
       </Field>
       <div style={{ height: 14 }} />
       <Field label="Contraseña">
@@ -62,7 +58,7 @@ export default function LoginPage() {
         <Checkbox checked={remember} onChange={setRemember} label="Recordarme" />
         <button
           type="button"
-          className="bg-transparent border-0 cursor-pointer"
+          className="cursor-pointer border-0 bg-transparent"
           style={{ fontSize: 12.5, color: "var(--fg2)" }}
         >
           ¿Olvidaste tu contraseña?
@@ -85,10 +81,7 @@ export default function LoginPage() {
         }}
       >
         ¿No tenés cuenta?{" "}
-        <Link
-          href="/register"
-          style={{ color: "var(--fg1)", fontWeight: 500, cursor: "pointer" }}
-        >
+        <Link href="/register" style={{ color: "var(--fg1)", fontWeight: 500, cursor: "pointer" }}>
           Registrate
         </Link>
       </div>

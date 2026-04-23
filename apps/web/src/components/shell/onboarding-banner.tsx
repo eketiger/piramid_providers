@@ -39,8 +39,7 @@ export function OnboardingBanner() {
           top: -30,
           width: 160,
           height: 160,
-          background:
-            "radial-gradient(circle, rgba(245,137,58,0.28), transparent 65%)",
+          background: "radial-gradient(circle, rgba(245,137,58,0.28), transparent 65%)",
           pointerEvents: "none",
         }}
       />

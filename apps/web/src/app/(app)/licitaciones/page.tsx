@@ -45,17 +45,28 @@ function LicitacionesPage() {
     if (estado && b.estado.key !== estado) return false;
     if (search) {
       const q = search.toLowerCase();
-      if (!`${b.id} ${b.titulo} ${b.empresa} ${b.cliente}`.toLowerCase().includes(q))
-        return false;
+      if (!`${b.id} ${b.titulo} ${b.empresa} ${b.cliente}`.toLowerCase().includes(q)) return false;
     }
     return true;
   });
 
   const tabs = [
     { key: "todas", label: "Todas", count: BIDS.length },
-    { key: "abiertas", label: "Abiertas", count: BIDS.filter((b) => b.estado.key === "abierta").length },
-    { key: "cotizadas", label: "Cotizadas", count: BIDS.filter((b) => b.estado.key === "cotizada").length },
-    { key: "adjudicadas", label: "Adjudicadas", count: BIDS.filter((b) => b.estado.key === "adjudicada").length },
+    {
+      key: "abiertas",
+      label: "Abiertas",
+      count: BIDS.filter((b) => b.estado.key === "abierta").length,
+    },
+    {
+      key: "cotizadas",
+      label: "Cotizadas",
+      count: BIDS.filter((b) => b.estado.key === "cotizada").length,
+    },
+    {
+      key: "adjudicadas",
+      label: "Adjudicadas",
+      count: BIDS.filter((b) => b.estado.key === "adjudicada").length,
+    },
   ];
 
   const openDrawer = (b: Bid) => {
@@ -294,9 +305,7 @@ function BidDrawer({ bid, onClose }: { bid: Bid; onClose: () => void }) {
             <div style={{ fontSize: 22, fontWeight: 600, marginTop: 8 }} className="mono">
               {bid.competidores}
             </div>
-            <div style={{ fontSize: 11.5, color: "var(--fg3)" }}>
-              proveedores cotizando
-            </div>
+            <div style={{ fontSize: 11.5, color: "var(--fg3)" }}>proveedores cotizando</div>
           </div>
         </div>
 
@@ -384,11 +393,7 @@ function BidDrawer({ bid, onClose }: { bid: Bid; onClose: () => void }) {
           </div>
           <div style={{ marginBottom: 14 }}>
             <Field label="Plazo comprometido" required>
-              <select
-                className="select"
-                value={plazo}
-                onChange={(e) => setPlazo(e.target.value)}
-              >
+              <select className="select" value={plazo} onChange={(e) => setPlazo(e.target.value)}>
                 <option>1-2 días</option>
                 <option>3-5 días</option>
                 <option>5-7 días</option>

@@ -52,8 +52,13 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
         </div>
         <div style={{ fontSize: 11, color: "var(--fg3)" }}>
           © 2026 Piramid by Ravel ·{" "}
-          <a href="/legal/terms" style={{ color: "var(--fg2)" }}>Términos</a> ·{" "}
-          <a href="/legal/privacy" style={{ color: "var(--fg2)" }}>Privacidad</a>
+          <a href="/legal/terms" style={{ color: "var(--fg2)" }}>
+            Términos
+          </a>{" "}
+          ·{" "}
+          <a href="/legal/privacy" style={{ color: "var(--fg2)" }}>
+            Privacidad
+          </a>
         </div>
       </div>
       <div
@@ -75,8 +80,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
             top: -80,
             width: 400,
             height: 400,
-            background:
-              "radial-gradient(circle, rgba(245,137,58,0.35), transparent 65%)",
+            background: "radial-gradient(circle, rgba(245,137,58,0.35), transparent 65%)",
           }}
         />
         <div
@@ -86,8 +90,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
             bottom: -60,
             width: 260,
             height: 260,
-            background:
-              "radial-gradient(circle, rgba(245,137,58,0.15), transparent 60%)",
+            background: "radial-gradient(circle, rgba(245,137,58,0.15), transparent 60%)",
           }}
         />
         <div style={{ position: "relative" }}>

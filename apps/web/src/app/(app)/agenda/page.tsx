@@ -1,13 +1,7 @@
 "use client";
 
 import * as React from "react";
-import {
-  Button,
-  EmptyState,
-  IconButton,
-  Pill,
-  Switch,
-} from "@/components/ui";
+import { Button, EmptyState, IconButton, Pill, Switch } from "@/components/ui";
 import { VISITS } from "@/data/fixtures";
 
 export default function AgendaPage() {
@@ -279,9 +273,7 @@ export default function AgendaPage() {
                     </div>
                     {Array.from({ length: 7 }).map((_, i) => {
                       const d = weekStart + i;
-                      const visits = (visitsByDay[d] || []).filter(
-                        (v) => parseInt(v.hora) === h,
-                      );
+                      const visits = (visitsByDay[d] || []).filter((v) => parseInt(v.hora) === h);
                       return (
                         <div
                           key={i}
@@ -413,10 +405,7 @@ export default function AgendaPage() {
                                   {v.cliente} · {v.direccion}
                                 </div>
                               </div>
-                              <Pill
-                                variant={v.estado === "agendada" ? "info" : "ghost"}
-                                size="sm"
-                              >
+                              <Pill variant={v.estado === "agendada" ? "info" : "ghost"} size="sm">
                                 {v.estado}
                               </Pill>
                             </div>
@@ -453,10 +442,7 @@ export default function AgendaPage() {
                     >
                       {v.hora}
                     </span>
-                    <Pill
-                      variant={v.estado === "agendada" ? "info" : "ghost"}
-                      size="sm"
-                    >
+                    <Pill variant={v.estado === "agendada" ? "info" : "ghost"} size="sm">
                       {v.estado}
                     </Pill>
                   </div>
@@ -556,4 +542,3 @@ export default function AgendaPage() {
     </div>
   );
 }
-

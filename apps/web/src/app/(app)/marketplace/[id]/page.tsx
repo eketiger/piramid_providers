@@ -1,11 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import {
-  Button,
-  Icon,
-  Pill,
-} from "@/components/ui";
+import { Button, Icon, Pill } from "@/components/ui";
 import { PROVIDER, VERTICALS } from "@/data/fixtures";
 
 export default function MarketplaceProfilePage() {
@@ -35,8 +31,7 @@ export default function MarketplaceProfilePage() {
             top: -80,
             width: 340,
             height: 340,
-            background:
-              "radial-gradient(circle, rgba(245,137,58,0.35), transparent 65%)",
+            background: "radial-gradient(circle, rgba(245,137,58,0.35), transparent 65%)",
           }}
         />
         <div className="eyebrow" style={{ color: "var(--accent)" }}>
