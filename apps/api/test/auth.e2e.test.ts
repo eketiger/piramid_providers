@@ -16,11 +16,13 @@ describe("AuthController (integration)", () => {
     process.env.JWT_SECRET = "test-secret";
 
     prisma = new PrismaClient({ datasources: { db: { url: TEST_DB } } });
-    // Reset
-    await prisma.$executeRawUnsafe("DELETE FROM BidQuote");
-    await prisma.$executeRawUnsafe("DELETE FROM Bid");
-    await prisma.$executeRawUnsafe("DELETE FROM User");
-    await prisma.$executeRawUnsafe("DELETE FROM Provider");
+    // Reset using the generated API so we're immune to MySQL table-name
+    // case sensitivity and to FK-ordering concerns.
+    await prisma.bidQuote.deleteMany();
+    await prisma.bid.deleteMany();
+    await prisma.user.deleteMany();
+    await prisma.provider.deleteMany();
+    await prisma.auditLog.deleteMany();
 
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule],
