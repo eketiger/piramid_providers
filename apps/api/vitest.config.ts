@@ -41,16 +41,8 @@ export default defineConfig({
       // the include list as we add their test files (keeps the thresholds
       // honest instead of stretching a 70% target across code we haven't
       // tested yet).
-      include: [
-        "src/modules/auth/**/*.ts",
-        "src/modules/bids/**/*.ts",
-        "src/common/zod-pipe.ts",
-      ],
-      exclude: [
-        "**/*.test.ts",
-        "**/*.d.ts",
-        "src/**/*.module.ts",
-      ],
+      include: ["src/modules/auth/**/*.ts", "src/modules/bids/**/*.ts", "src/common/zod-pipe.ts"],
+      exclude: ["**/*.test.ts", "**/*.d.ts", "src/**/*.module.ts"],
       thresholds: {
         lines: 70,
         functions: 70,

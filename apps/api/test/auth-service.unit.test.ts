@@ -55,7 +55,9 @@ describe("AuthService.googleExchange", () => {
   });
 
   it("rejects an obviously invalid ID token with AUTH_INVALID_CREDENTIALS", async () => {
-    const { svc, restore } = await makeService({ GOOGLE_CLIENT_ID: "test-client.apps.googleusercontent.com" });
+    const { svc, restore } = await makeService({
+      GOOGLE_CLIENT_ID: "test-client.apps.googleusercontent.com",
+    });
     try {
       await svc.googleExchange("not-a-real-jwt");
       throw new Error("expected to throw");
